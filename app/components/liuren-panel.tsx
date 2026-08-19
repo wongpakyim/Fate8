@@ -37,7 +37,7 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
           {pillars.map((pillar, index) => <div key={pillarLabels[index]}><small>{pillarLabels[index]}</small><strong>{pillar[0]}</strong><b>{pillar[1]}</b></div>)}
         </div>
         <p><span>月将</span><strong><b className={elementClass(result.monthGeneral.element)}>{result.monthGeneral.branch}</b>{result.monthGeneral.name}</strong><span>占时</span><strong className={elementClass(result.divinationTime.branch.element)}>{result.divinationTime.branch.name}</strong><span>{result.heavenlyGenerals.dayNight}</span><strong>{result.heavenlyGenerals.direction}</strong></p>
-        <p><span>{result.monthGeneral.currentMiddleQi.name}后换将</span><strong>{result.threeTransmissions.method}</strong><span>贵人</span><strong className={elementClass(result.heavenlyGenerals.nobleman.element)}>{result.heavenlyGenerals.nobleman.name}</strong></p>
+        <p><span>{result.monthGeneral.currentMiddleQi.name}后换将</span><span>贵人</span><strong className={elementClass(result.heavenlyGenerals.nobleman.element)}>{result.heavenlyGenerals.nobleman.name}</strong></p>
       </header>
 
       <div className="liuren-classic-board" aria-label="大六壬传统天地盘">
@@ -52,11 +52,10 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
 
         <section className="liuren-classic-center">
           <div className="classic-transmissions">
-            <small>三传 · {result.threeTransmissions.method}</small>
+            <small>三传</small>
             {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
           </div>
           <div className="classic-lessons">
-            <small>四课</small>
             <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><span className={elementClass(lesson.heavenlyGeneralDetail.element)}>{lesson.heavenlyGeneral}</span><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em>{lesson.relation}</em></p>)}</div>
           </div>
         </section>
