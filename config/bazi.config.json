@@ -4,6 +4,14 @@
   "solarTimeMode": "apparent",
   "defaultLongitude": 120,
   "calendar": "proleptic-gregorian",
+  "liuRen": {
+    "monthGeneralMethod": "middle-qi",
+    "monthGeneral": null
+  },
+  "qiMen": {
+    "method": "chai-bu",
+    "style": "rotating"
+  },
   "reverseSearch": {
     "startYear": 1000,
     "endYear": 2100,

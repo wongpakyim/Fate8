@@ -7,14 +7,14 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host") || "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") || (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const title = "知命排盘｜阳历、节气与真太阳时四柱排盘";
-  const description = "输入阳历出生时间与出生地，按节气和真太阳时生成详实四柱命盘；支持公元 1000–2100 年八字反查、API 与命令行调用。";
+  const title = "知命排盘｜水墨青山中的四柱排盘";
+  const description = "输入阳历出生时间与出生地，在新中式水墨界面中按节气和真太阳时生成详实四柱命盘，并支持公元 1000–2100 年八字反查。";
   return {
     title,
     description,
     icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
-    openGraph: { title, description, type: "website", images: [{ url: `${origin}/og.png`, width: 1736, height: 907, alt: "知命排盘四柱命盘" }] },
-    twitter: { card: "summary_large_image", title, description, images: [`${origin}/og.png`] },
+    openGraph: { title, description, type: "website", images: [{ url: `${origin}/ink-mountains.png`, width: 1736, height: 907, alt: "知命排盘水墨青山" }] },
+    twitter: { card: "summary_large_image", title, description, images: [`${origin}/ink-mountains.png`] },
   };
 }
 

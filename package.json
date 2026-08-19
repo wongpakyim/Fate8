@@ -10,6 +10,8 @@
     "build": "vinext build",
     "start": "vinext start",
     "bazi": "node scripts/bazi.mjs",
+    "chart:core": "node scripts/bazi.mjs --mode core",
+    "chart:simple": "node scripts/bazi.mjs --mode simple",
     "test": "npm run build && node --test",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate"

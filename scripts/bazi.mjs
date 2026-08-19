@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 import { readFileSync, writeFileSync } from "node:fs";
 import process from "node:process";
-import { calculateBazi, formatBaziText, reverseSearchBazi } from "../lib/bazi.mjs";
+import { calculateFourPillars, reverseSearchFourPillars } from "../lib/four-pillars.mjs";
+import { buildBaziChart, formatBaziText } from "../lib/chart-presentation.mjs";
+import { formatLiuRenText } from "../lib/liu-ren.mjs";
+import { formatQiMenText } from "../lib/qi-men.mjs";
+import { buildReadingSession } from "../lib/reading-session.mjs";
+import { formatMetaphysicsCoreText } from "../lib/metaphysics-core.mjs";
+import { buildSimpleChart, formatSimpleChartText } from "../lib/simple-chart.mjs";
 
 const defaults = JSON.parse(readFileSync(new URL("../config/bazi.config.json", import.meta.url), "utf8"));
 
@@ -26,6 +32,18 @@ function help() {
   npm run bazi -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male
   npm run bazi -- --input ./birth.json --format text --out ./result.txt
 
+六壬：
+  npm run bazi -- --mode liuren --datetime "1992-03-15 14:30" --longitude 113.27
+  npm run bazi -- --mode liuren --month-general 子 --format text --input ./birth.json
+
+奇门：
+  npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27
+  npm run bazi -- --mode qimen --format text --input ./birth.json
+
+公共核心与简盘：
+  npm run bazi -- --mode core --datetime "1992-03-15 14:30" --longitude 113.27
+  npm run bazi -- --mode simple --format text --input ./birth.json
+
 反查：
   npm run bazi -- --reverse "壬申 癸卯 庚寅 癸未" --start 1000 --end 2100
 
@@ -40,6 +58,8 @@ function help() {
   --boundary    23 或 24 时换日
   --solar-time  apparent / mean / none
   --format      json / text，默认 json
+  --mode        pillars / core（公共核心）/ simple（简化全盘）/ chart（八字，默认）/ liuren / qimen / all
+  --month-general  六壬手动月将：子/神后等；省略按中气自动换将
   --out         写入文件；省略则输出到终端
   --help        显示帮助`;
 }
@@ -66,14 +86,32 @@ try {
   };
   let payload;
   if (args.reverse) {
-    payload = reverseSearchBazi(args.reverse, { ...config, startYear: Number(args.start ?? 1000), endYear: Number(args.end ?? 2100), maxResults: Number(args.limit ?? 60), longitude: Number(args.longitude ?? defaults.defaultLongitude), sex: args.sex });
+    payload = reverseSearchFourPillars(args.reverse, { ...config, startYear: Number(args.start ?? 1000), endYear: Number(args.end ?? 2100), maxResults: Number(args.limit ?? 60), longitude: Number(args.longitude ?? defaults.defaultLongitude), sex: args.sex });
   } else {
     const supplied = fileInput && typeof fileInput === "object" ? fileInput : {};
     const positional = args._.join(" ").trim();
     const solarTime = typeof fileInput === "string" ? fileInput : (args.datetime ?? (positional || supplied.solarTime));
-    payload = calculateBazi({ ...supplied, solarTime, longitude: Number(args.longitude ?? supplied.longitude ?? defaults.defaultLongitude), latitude: args.latitude ?? supplied.latitude, location: args.location ?? supplied.location, timezoneOffset: Number(args.timezone ?? supplied.timezoneOffset ?? defaults.timezoneOffset), sex: args.sex ?? supplied.sex ?? "male" }, config);
+    const calculation = calculateFourPillars({ ...supplied, solarTime, longitude: Number(args.longitude ?? supplied.longitude ?? defaults.defaultLongitude), latitude: args.latitude ?? supplied.latitude, location: args.location ?? supplied.location, timezoneOffset: Number(args.timezone ?? supplied.timezoneOffset ?? defaults.timezoneOffset), sex: args.sex ?? supplied.sex ?? "male" }, config);
+    const mode = String(args.mode || "chart");
+    const simpleOptions = { liuRen: { monthGeneral: args["month-general"] ?? supplied.monthGeneral }, qiMen: { method: "chai-bu" } };
+    let simple;
+    const getSimple = () => simple ??= buildSimpleChart(calculation, simpleOptions);
+    if (mode === "pillars") payload = calculation;
+    else if (mode === "core") payload = getSimple().core;
+    else if (mode === "simple") payload = getSimple();
+    else if (mode === "liuren") payload = getSimple().liuRen;
+    else if (mode === "qimen") payload = getSimple().qiMen;
+    else if (mode === "all") {
+      const session = buildReadingSession(calculation, simpleOptions);
+      payload = { core: session.core, simple: session.simple, fourPillars: session.calculation, bazi: session.bazi, liuRen: session.liuRen, qiMen: session.qiMen };
+    }
+    else payload = buildBaziChart(calculation);
   }
-  const output = String(args.format || "json") === "text" && !args.reverse ? formatBaziText(payload) : JSON.stringify(payload, null, 2);
+  let output;
+  if (String(args.format || "json") === "text" && !args.reverse) {
+    const mode = String(args.mode || "chart");
+    output = mode === "pillars" ? `四柱：${payload.fourPillars.text}\n起运：${payload.luckStart.startTime}\n方向：${payload.luckStart.direction}\n起运年龄：${payload.luckStart.startAge} 岁` : mode === "core" ? formatMetaphysicsCoreText(payload) : mode === "simple" ? formatSimpleChartText(payload) : mode === "liuren" ? formatLiuRenText(payload) : mode === "qimen" ? formatQiMenText(payload) : mode === "all" ? `${formatSimpleChartText(payload.simple)}\n\n${formatBaziText(payload.bazi)}` : formatBaziText(payload);
+  } else output = JSON.stringify(payload, null, 2);
   if (args.out) writeFileSync(String(args.out), output + "\n", "utf8");
   else console.log(output);
 } catch (error) {
