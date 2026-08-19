@@ -44,12 +44,15 @@ export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy }: { 
         {result.palaces.map((palace) => <article className={`qimen-palace ${palace.number === 5 ? "center" : ""} ${palace.isChiefStar ? "chief-star" : ""} ${palace.isChiefDoor ? "chief-door" : ""}`} key={palace.number}>
           <header><div><strong>{palace.name}</strong><span>{palace.direction}{palace.branches.length ? ` · ${palace.branches.join("、")}` : ""}</span></div><div className="qimen-flags">{palace.isChiefStar && <b className="chief">值符</b>}{palace.isChiefDoor && <b className="chief-door-flag">值使</b>}{palace.isVoid && <b>空亡</b>}{palace.isHorse && <b>马星</b>}</div></header>
           {palace.number === 5 ? <div className="qimen-center-content"><small>天禽寄坤二</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>中宫地盘奇仪</span></div> : <div className="qimen-palace-body">
-            <div className="qimen-spirit-star-row"><section><small>八神</small><strong>{palace.deity}</strong></section><section><small>九星</small><strong>{palace.stars.join("·")}</strong></section></div>
-            <div className="qimen-stem-row">
-              <section><small>天盘干</small><strong className={elementClass(palace.heavenInstruments[0])}>{palace.heavenInstruments.join("·")}</strong><span>{growthLabel(palace.heavenGrowth)}</span></section>
-              <section><small>地盘干</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>{growthLabel(palace.earthGrowth)}</span></section>
+            <div className="qimen-pair-row">
+              <section className="qimen-deity-value"><small>八神</small><strong>{palace.deity}</strong></section>
+              <section className="qimen-heaven-stem-value"><small>天盘干</small><strong className={elementClass(palace.heavenInstruments[0])}>{palace.heavenInstruments.join("·")}</strong><span>{growthLabel(palace.heavenGrowth)}</span></section>
             </div>
-            <div className="qimen-door-row"><small>八门</small><strong>{palace.door}</strong></div>
+            <div className="qimen-pair-row">
+              <section className="qimen-star-value"><small>九星</small><strong>{palace.stars.join("·")}</strong></section>
+              <section className="qimen-earth-stem-value"><small>地盘干</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>{growthLabel(palace.earthGrowth)}</span></section>
+            </div>
+            <div className="qimen-door-value"><small>八门</small><strong>{palace.door}</strong></div>
           </div>}
         </article>)}
       </div>
