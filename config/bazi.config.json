@@ -1,0 +1,12 @@
+{
+  "dayBoundary": 23,
+  "timezoneOffset": 8,
+  "solarTimeMode": "apparent",
+  "defaultLongitude": 120,
+  "calendar": "proleptic-gregorian",
+  "reverseSearch": {
+    "startYear": 1000,
+    "endYear": 2100,
+    "maxResults": 60
+  }
+}
