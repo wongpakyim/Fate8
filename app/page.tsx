@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from "react";
 import divisionSource from "@/data/china-divisions.json";
+import { formatBirthCode, parseBirthCode } from "@/lib/birth-code.mjs";
 import { calculateFourPillars, getAnnualPillar, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
 import { formatBaziText, getBaziNodeRelations, getBaziNodeStates } from "@/lib/chart-presentation.mjs";
 import { buildReadingSession } from "@/lib/reading-session.mjs";
 import { formatLiuRenText } from "@/lib/liu-ren.mjs";
 import { formatQiMenText } from "@/lib/qi-men.mjs";
+import { BaziNodePanel } from "@/app/components/bazi-node-panel";
 import { LiuRenPanel } from "@/app/components/liuren-panel";
 import { ModuleTabs, type ModuleTab } from "@/app/components/module-tabs";
 import { QiMenPanel } from "@/app/components/qimen-panel";
@@ -27,44 +29,6 @@ const divisions = divisionSource as Division[];
 const defaultProvinceCode = "440000";
 const defaultCityCode = "440100";
 const defaultDistrictCode = "440104";
-const nodeCoordinates = [[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [3, 1]] as const;
-const pathColors = ["#9b3a2d", "#315f50", "#987348", "#3e6670", "#64715a", "#8b5448", "#2f7370", "#756346", "#4f6b47", "#7e493d", "#477981", "#596b64", "#9a6538", "#3f6456", "#76535b", "#526b78"];
-
-type NodePath = { nodes: [number, number, number]; edges: [[number, number], [number, number]]; color: string };
-
-function buildNodePaths(): NodePath[] {
-  const neighbors = nodeCoordinates.map(([x1, y1]) => nodeCoordinates.flatMap(([x2, y2], index) => Math.abs(x1 - x2) + Math.abs(y1 - y2) === 1 ? [index] : []));
-  const paths: Omit<NodePath, "color">[] = [];
-  neighbors.forEach((adjacent, center) => {
-    for (let left = 0; left < adjacent.length; left += 1) for (let right = left + 1; right < adjacent.length; right += 1) {
-      paths.push({ nodes: [adjacent[left], center, adjacent[right]], edges: [[adjacent[left], center], [center, adjacent[right]]] });
-    }
-  });
-  paths.sort((a, b) => a.nodes[0] - b.nodes[0] || a.nodes[1] - b.nodes[1] || a.nodes[2] - b.nodes[2]);
-  return paths.map((path, index) => ({ ...path, color: pathColors[index] }));
-}
-
-const nodePaths = buildNodePaths();
-const directedPathEntries = nodePaths.flatMap((path, index) => [
-  { path, index, startIndex: path.nodes[0], nodes: path.nodes },
-  { path, index, startIndex: path.nodes[2], nodes: [path.nodes[2], path.nodes[1], path.nodes[0]] as [number, number, number] },
-]);
-const pathStartIndexes = [...new Set(directedPathEntries.map((entry) => entry.startIndex))].sort((a, b) => a - b);
-const edgePathIndexes = new Map<string, number[]>();
-nodePaths.forEach((path, pathIndex) => path.edges.forEach(([from, to]) => {
-  const key = [from, to].sort((a, b) => a - b).join("-");
-  edgePathIndexes.set(key, [...(edgePathIndexes.get(key) || []), pathIndex]);
-}));
-
-function pathSegmentStyle(from: number, to: number, pathIndex: number, color: string): React.CSSProperties {
-  const [x1, y1] = nodeCoordinates[from], [x2, y2] = nodeCoordinates[to];
-  const key = [from, to].sort((a, b) => a - b).join("-");
-  const usages = edgePathIndexes.get(key) || [pathIndex];
-  const offset = (usages.indexOf(pathIndex) - (usages.length - 1) / 2) * 4;
-  if (y1 === y2) return { left: `${Math.min(x1, x2) * 25 + 12.5}%`, top: `calc(${y1 === 0 ? 25 : 75}% + ${offset}px)`, width: "25%", height: 3, background: color };
-  return { left: `calc(${x1 * 25 + 12.5}% + ${offset}px)`, top: "25%", width: 3, height: "50%", background: color };
-}
-
 function citiesFor(province?: Division): Division[] {
   if (!province?.children?.length) return province ? [province] : [];
   if (province.children[0].level === "county") {
@@ -89,7 +53,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<ModuleTab>("bazi");
   const [inputMode, setInputMode] = useState<"picker" | "text">("picker");
   const [dateTime, setDateTime] = useState("1992-03-15T14:30");
-  const [textTime, setTextTime] = useState("1992年3月15日 14:30");
+  const [textTime, setTextTime] = useState("1199203151430");
   const [sex, setSex] = useState("male");
   const [provinceCode, setProvinceCode] = useState(defaultProvinceCode);
   const [cityCode, setCityCode] = useState(defaultCityCode);
@@ -138,15 +102,19 @@ export default function Home() {
     setDistrictCode(districtsFor(nextCity)[0]?.code || "");
   }
 
-  function makeCalculation(solarTime: string) {
-    return calculateFourPillars({ solarTime, sex, location: manualLongitude ? "手工经度" : placeName, longitude: effectiveLongitude, latitude: manualLongitude ? undefined : locationCenter.latitude, timezoneOffset: Number(timezone) }, { dayBoundary, solarTimeMode });
+  function makeCalculation(solarTime: string, chartSex = sex) {
+    return calculateFourPillars({ solarTime, sex: chartSex, location: manualLongitude ? "手工经度" : placeName, longitude: effectiveLongitude, latitude: manualLongitude ? undefined : locationCenter.latitude, timezoneOffset: Number(timezone) }, { dayBoundary, solarTimeMode });
   }
 
   function submitChart(event?: React.FormEvent) {
     event?.preventDefault();
     try {
       if (!Number.isFinite(effectiveLongitude)) throw new Error("请输入有效经度");
-      const nextCalculation = makeCalculation(inputMode === "picker" ? dateTime.replace("T", " ") : textTime);
+      const codedInput = inputMode === "text" ? parseBirthCode(textTime) : null;
+      const chartSex = codedInput?.sex || sex;
+      const nextCalculation = makeCalculation(codedInput?.solarTime || dateTime.replace("T", " "), chartSex);
+      setSex(chartSex);
+      if (codedInput) setDateTime(codedInput.solarTime.slice(0, 16).replace(" ", "T"));
       setCalculation(nextCalculation);
       setSelectedNode(null);
       setSelectedPath(null);
@@ -162,7 +130,7 @@ export default function Home() {
     const now = new Date();
     const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     setDateTime(local);
-    setTextTime(`${local.slice(0, 4)}年${Number(local.slice(5, 7))}月${Number(local.slice(8, 10))}日 ${local.slice(11)}`);
+    setTextTime(formatBirthCode(local, sex));
     setInputMode("picker");
   }
 
@@ -221,7 +189,6 @@ export default function Home() {
   const pillars = [result.fourPillars.year, result.fourPillars.month, result.fourPillars.day, result.fourPillars.hour];
   const baziNodes = getBaziNodeStates(result);
   const nodeRelations = selectedNode == null ? null : getBaziNodeRelations(result, selectedNode);
-  const activePathNodes = new Set(selectedPath == null ? [] : nodePaths[selectedPath].nodes);
   const selectedCycle = selectedLuck == null ? null : result.luck.cycles[selectedLuck];
   const annualYears = selectedCycle ? Array.from({ length: 10 }, (_, index) => ({ ...getAnnualPillar(selectedCycle.startYear + index), age: Number((selectedCycle.startAge + index).toFixed(2)) })) : [];
   const liuRen = session.liuRen;
@@ -250,15 +217,11 @@ export default function Home() {
             <button type="button" className={inputMode === "text" ? "selected" : ""} onClick={() => setInputMode("text")}>文字输入</button>
           </div>
 
-          {inputMode === "picker" ? (
-            <div className="form-grid">
-              <label className="wide datetime-field"><span className="datetime-label-row">阳历出生时间<button type="button" onClick={useCurrentTime}>现在</button></span><input type="datetime-local" min="1000-01-01T00:00" max="2100-12-31T23:59" value={dateTime} onChange={(event) => setDateTime(event.target.value)} /></label>
-              <label>性别<select value={sex} onChange={(event) => setSex(event.target.value)}><option value="male">男 · 乾造</option><option value="female">女 · 坤造</option></select></label>
-              <label>时区<select value={timezone} onChange={(event) => setTimezone(event.target.value)}><option value="8">UTC+8 北京</option><option value="7">UTC+7</option><option value="9">UTC+9</option><option value="0">UTC±0</option></select></label>
-            </div>
-          ) : (
-            <label className="text-input">阳历时间字符串<input value={textTime} onChange={(event) => setTextTime(event.target.value)} placeholder="如：1992年3月15日 14:30" /></label>
-          )}
+          <div className="form-grid">
+            {inputMode === "picker" ? <label className="wide datetime-field"><span className="datetime-label-row">阳历出生时间<button type="button" onClick={useCurrentTime}>现在</button></span><input type="datetime-local" required min="1000-01-01T00:00" max="2100-12-31T23:59" value={dateTime} onChange={(event) => { const value = event.target.value; setDateTime(value); if (value) setTextTime(formatBirthCode(value, sex)); }} /></label> : <label className="wide text-input">性别码 + 阳历时间<input inputMode="numeric" autoComplete="off" value={textTime} onChange={(event) => { const value = event.target.value; setTextTime(value); const code = value.trim()[0]; if (code === "0" || code === "1") setSex(code === "0" ? "female" : "male"); }} placeholder="如：0201903010856" /><small>0 女 · 1 男，后接 yyyyMMddHHmm，秒数自动按 00 计算</small></label>}
+            <label>性别<select value={sex} onChange={(event) => { const nextSex = event.target.value; setSex(nextSex); setTextTime((current) => current.replace(/^(\s*)[01]/, `$1${nextSex === "female" ? "0" : "1"}`)); }}><option value="female">女 · 坤造 · 0</option><option value="male">男 · 乾造 · 1</option></select></label>
+            <label>时区<select value={timezone} onChange={(event) => setTimezone(event.target.value)}><option value="8">UTC+8 北京</option><option value="7">UTC+7</option><option value="9">UTC+9</option><option value="0">UTC±0</option></select></label>
+          </div>
 
           <div className="divider" />
           <div className="field-title-row"><span className="field-label">出生地</span><button type="button" className="text-button" onClick={() => setManualLongitude((value) => !value)}>{manualLongitude ? "使用行政区" : "直接输入经度"}</button></div>
@@ -313,7 +276,7 @@ export default function Home() {
           </div>
 
           {nodeRelations && <section className="chart-relation-panel" aria-live="polite">
-            <header><div><small>八字盘面 · 八字对比矩阵</small><strong>{nodeRelations.target.meta}{nodeRelations.target.char}</strong><span>以 {nodeRelations.reference.source}「{nodeRelations.reference.name}{nodeRelations.reference.element}」为参照 · 上排四干，下排四支</span></div><button type="button" onClick={() => setSelectedNode(null)}>关闭</button></header>
+            <header><div><small>动态信息 · 八字对比矩阵</small><strong>{nodeRelations.target.meta}{nodeRelations.target.char}</strong><span>以 {nodeRelations.reference.source}「{nodeRelations.reference.name}{nodeRelations.reference.element}」为参照 · 上排四干，下排四支</span></div><button type="button" onClick={() => setSelectedNode(null)}>关闭</button></header>
             <div className="node-relation-grid">
               {nodeRelations.relations.map((relation) => <article className={relation.isSelf ? "self" : ""} key={relation.id}>
                 <div><small>{relation.meta} · {relation.element}</small><strong className={elementClass(relation.element)}>{relation.char}</strong>{relation.isSelf && <em>自身</em>}</div>
@@ -326,24 +289,6 @@ export default function Home() {
             </div>
           </section>}
 
-          <section className="manhattan-panel" aria-label="八字正交相邻路径图">
-            <header><div><strong>八字节点</strong><span>2 × 4 正交网格 · 16 组路径 · 8 个起点双向排列</span></div><small>仅显示节点路径</small></header>
-            <div className="manhattan-board">
-              {nodePaths.flatMap((path, pathIndex) => path.edges.map(([from, to], edgeIndex) => <button type="button" className={`path-segment ${selectedPath === pathIndex ? "selected" : selectedPath != null ? "muted" : ""}`} style={pathSegmentStyle(from, to, pathIndex, path.color)} onClick={() => setSelectedPath(selectedPath === pathIndex ? null : pathIndex)} aria-label={`选择路径 ${path.nodes.map((index) => baziNodes[index].meta).join("-")}`} key={`${pathIndex}-${edgeIndex}`} />))}
-              {baziNodes.map((node, index) => {
-                const [x, y] = nodeCoordinates[index];
-                const state = selectedPath != null && activePathNodes.has(index) ? "connected" : selectedPath != null ? "faded" : "";
-                return <div className={`bazi-node ${state}`} style={{ gridColumn: x + 1, gridRow: y + 1 }} key={node.id}><small>{node.meta}</small><strong>{node.char}</strong></div>;
-              })}
-            </div>
-            <div className="path-combinations" aria-label="按起始节点排列的连续三节点组合">
-              {pathStartIndexes.map((startIndex) => <section className="path-start-group" key={startIndex}>
-                <header><strong>{baziNodes[startIndex].meta}{baziNodes[startIndex].char}</strong><span>起点</span></header>
-                <div>{directedPathEntries.filter((entry) => entry.startIndex === startIndex).map(({ path, index, nodes }) => <button type="button" className={selectedPath === index ? "selected" : ""} onClick={() => setSelectedPath(selectedPath === index ? null : index)} aria-pressed={selectedPath === index} key={`${index}-${startIndex}`}><i style={{ background: path.color }} /><span>{nodes.map((nodeIndex) => `${baziNodes[nodeIndex].meta}${baziNodes[nodeIndex].char}`).join(" — ")}</span></button>)}</div>
-              </section>)}
-            </div>
-            <footer><span><i className="legend-route" />彩色辅助线均可点击</span><span><i className="legend-connected" />黑框内为三节点路径</span></footer>
-          </section>
         </article>
       </section>}
 
@@ -352,7 +297,7 @@ export default function Home() {
       {activeTab === "qimen" && <QiMenPanel result={qiMen} dayPillar={calculation.fourPillars.day.value} hourPillar={calculation.fourPillars.hour.value} copied={copiedPanel === "qimen"} onCopy={() => copyPanelText("qimen", formatQiMenText(qiMen))} />}
 
       {activeTab === "bazi" && <section className="detail-section luck-only">
-        <div className="detail-heading"><span className="step">运</span><div><h2>大运排布</h2><p>点击任一大运，展开该运十个流年</p></div></div>
+        <div className="detail-heading"><span className="step">运</span><div><h2>大运流年</h2><p>点击任一大运，展开该运十个流年</p></div></div>
         <article className="luck-card"><header><div><span>{result.luck.direction}</span><small>约 {result.luck.startAge} 岁起运 · 据 {result.luck.basisTerm}</small></div><p>{result.luck.note}</p></header><div className="luck-timeline">{result.luck.cycles.map((cycle, index) => <button type="button" className={selectedLuck === index ? "selected" : ""} onClick={() => setSelectedLuck(selectedLuck === index ? null : index)} aria-expanded={selectedLuck === index} key={cycle.order}><small>{cycle.startYear}</small><strong>{cycle.pillar}</strong><span>{cycle.startAge} 岁</span><em>{cycle.naYin}</em><i>{selectedLuck === index ? "收起" : "看流年"}</i></button>)}</div>
           {selectedCycle && <section className="annual-drawer"><header><div><strong>{selectedCycle.pillar}大运 · 十年流年</strong><span>{selectedCycle.startYear}—{selectedCycle.startYear + 9}</span></div><small>流年以当年立春为干支交接</small></header><div className="annual-grid">{annualYears.map((annual) => <div key={annual.year}><small>{annual.year}</small><strong>{annual.value}</strong><span>{annual.age} 岁</span><em>{annual.naYin}</em></div>)}</div></section>}
         </article>
@@ -360,6 +305,11 @@ export default function Home() {
 
       {activeTab === "bazi" && <section className="reverse-teaser" id="reverse">
         <span className="seal">反</span><div><small>已有八字，寻找出生时刻？</small><h2>八字反查 · 横跨千年寻时</h2><p>按年、月、日、时四柱筛选真实阳历时间，支持经度与换日口径复核。</p></div><button onClick={openReverse}>进入反查 <span>1000—2100</span></button>
+      </section>}
+
+      {activeTab === "bazi" && <section className="detail-section node-only">
+        <div className="detail-heading"><span className="step">点</span><div><h2>八字节点</h2><p>按起始节点查看相邻三节点正交路径</p></div></div>
+        <BaziNodePanel nodes={baziNodes} selectedPath={selectedPath} onSelectPath={setSelectedPath} />
       </section>}
 
       {activeTab === "reverse" && <ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSearch={searchReverse} onApply={applyReverseMatch} />}

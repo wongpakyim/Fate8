@@ -31,11 +31,13 @@
 4. `simple-chart.mjs` 是稳定的 JSON/TXT 交换层；CLI、文件和简化 API 使用它，Web 详细盘也从它继续展开。
 5. `reading-session.mjs` 只把简盘 JSON 与八字展示结果组织给 Web，不包含具体术数规则。
 6. `app/components/` 只负责各 Tab 的交互、颜色与排版，不实现排盘算法。
-7. 新增术数时，应先判断规则属于公共核心还是独立领域，再注册到简盘与详细盘；不得把算法写入页面组件。
+7. `birth-code.mjs` 是 Web 紧凑文字录入适配器，统一解析 `0/1 + yyyyMMddHHmm`，再把标准时间和性别交给四柱层。
+8. 新增术数时，应先判断规则属于公共核心还是独立领域，再注册到简盘与详细盘；不得把算法写入页面组件。
 
 ## Web 模块
 
 - `module-tabs.tsx`：四个互斥 Tab 的导航。
 - `page.tsx`：保存共用时间与当前 Tab，调用应用编排层。
 - `liuren-panel.tsx`、`qimen-panel.tsx`、`reverse-panel.tsx`：独立界面组件。
-- 八字录入、八字盘面和大运目前由首页的八字容器管理；其数据仍全部来自 `chart-presentation.mjs`，不包含历法算法。
+- `bazi-node-panel.tsx`：独立八字节点与正交路径界面模块，置于八字页末尾。
+- 八字录入、八字盘面和大运由首页的八字容器编排；其数据仍全部来自 `chart-presentation.mjs`，不包含历法算法。

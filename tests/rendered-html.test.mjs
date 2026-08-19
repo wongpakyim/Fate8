@@ -30,11 +30,14 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /挂起/);
   assert.match(html, /现在/);
   assert.match(html, /复制文字简排/);
+  assert.match(html, /女 · 坤造 · 0/);
+  assert.match(html, /男 · 乾造 · 1/);
   assert.doesNotMatch(html, /大六壬排盘|时家奇门 · 拆补法|八字反查出生时刻/);
   const pillarIndex = html.indexOf('<div class="pillars"');
+  const luckIndex = html.indexOf('<section class="detail-section luck-only"');
   const nodeIndex = html.indexOf('<section class="manhattan-panel"');
-  assert.ok(pillarIndex < nodeIndex, "八字节点模块应位于四柱盘面之后");
-  const nodeModule = html.slice(nodeIndex, html.indexOf("</article>", nodeIndex));
+  assert.ok(pillarIndex < luckIndex && luckIndex < nodeIndex, "八字节点模块应独立置于大运流年之后");
+  const nodeModule = html.slice(nodeIndex, html.indexOf("<footer>", nodeIndex));
   assert.equal((nodeModule.match(/path-start-group/g) || []).length, 8);
   assert.doesNotMatch(nodeModule, /十二长生|旺相休囚死|十神|六亲|神煞|element-/);
   assert.match(html, /十二长生/);

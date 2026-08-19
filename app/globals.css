@@ -47,7 +47,7 @@ label.wide { grid-column:1/-1; }
 .datetime-label-row { display:flex; align-items:center; justify-content:space-between; }.datetime-label-row button { padding:3px 9px; border:1px solid #9aab9f; color:#29463a; background:#edf2eb; font-size:11px; font-weight:700; }.datetime-label-row button:hover { color:#fff; background:#29463a; }
 input,select { display:block; width:100%; margin-top:7px; border:1px solid #cad5ca; background:#f8f9f3; border-radius:2px; padding:11px 12px; color:#273d33; outline:none; }
 input:focus,select:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(182,138,82,.12); }
-.text-input { display:block; margin-bottom:10px; }
+.text-input { display:block; margin-bottom:10px; }.form-grid .text-input { margin-bottom:0; }.text-input>small { display:block; margin-top:7px; color:#7c8c83; font-size:10px; font-weight:500; line-height:1.5; }
 .divider { height:1px; background:var(--line); margin:22px 0 18px; }
 .field-label { display:block; margin-bottom:8px; }
 .field-title-row { display:flex; justify-content:space-between; align-items:center; }
@@ -159,7 +159,7 @@ summary span { float:right; color:#a09689; }
 .qimen-legend { width:min(1020px,100%); margin:15px auto 0; display:flex; justify-content:center; gap:26px; color:#65716a; font-size:12px; }.qimen-legend span { display:flex; align-items:center; gap:7px; }.qimen-legend i { display:block; width:22px; height:4px; }.legend-chief { background:#08a896; }.legend-door { background:#b6362e; }.legend-status { background:#b08c55; }
 .qimen-note { width:min(1020px,100%); margin:15px auto 0; padding:14px 17px; border-left:2px solid #9b3a2d; color:#53665c; background:#e9efe7; font-size:12px; line-height:1.75; }
 .reverse-page { max-width:900px; }.reverse-workbench { padding:34px; border:1px solid #b9c8bc; background:rgba(248,250,243,.95); box-shadow:0 20px 50px rgba(31,55,46,.09); }.reverse-workbench form>label { display:block; }.reverse-workbench form>label input { font-size:18px; letter-spacing:.25em; text-align:center; }
-.detail-section { width:min(1180px,92vw); margin:22px auto 20px; }
+.detail-section { width:min(1180px,92vw); margin:22px auto 20px; }.node-only .manhattan-panel { margin-top:0; }
 .detail-heading { display:flex; align-items:center; gap:12px; padding:24px 2px 18px; }.detail-heading div p { margin:4px 0 0; color:#9a9082; font-size:10px; }.method-chip { margin-left:auto; padding:5px 9px; border:1px solid var(--line); color:#948878; font-size:9px; }
 .detail-grid { display:grid; grid-template-columns:1fr 1.25fr; gap:14px; }
 .detail-card,.luck-card { border:1px solid #c7d2c8; background:rgba(250,251,245,.9); box-shadow:0 14px 36px rgba(31,55,46,.06); }
