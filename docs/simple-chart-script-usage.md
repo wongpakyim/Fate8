@@ -38,7 +38,12 @@ npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --
 
 # 全部领域对象：四柱、八字、六壬、奇门
 npm run bazi -- --mode all --input examples/birth.json --format json
+
+# 八字反排：固定按东经 120°、UTC+8 标准时返回匹配区间
+npm run bazi -- --reverse "丁卯 壬寅 癸丑 乙卯" --start 1987 --end 1987
 ```
+
+反排模式不读取出生地、经度和真太阳时参数；返回结果中的省、地级市、县统一标记为“反排”。
 
 ## 3. 输入形式
 

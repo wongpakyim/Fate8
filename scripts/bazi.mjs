@@ -46,6 +46,7 @@ function help() {
 
 反查：
   npm run bazi -- --reverse "壬申 癸卯 庚寅 癸未" --start 1000 --end 2100
+  固定按东经 120°、UTC+8 标准时查找时间区间，不读取地点和真太阳时参数
 
 参数：
   --datetime    阳历字符串（也可直接作为位置参数）
@@ -86,7 +87,7 @@ try {
   };
   let payload;
   if (args.reverse) {
-    payload = reverseSearchFourPillars(args.reverse, { ...config, startYear: Number(args.start ?? 1000), endYear: Number(args.end ?? 2100), maxResults: Number(args.limit ?? 60), longitude: Number(args.longitude ?? defaults.defaultLongitude), sex: args.sex });
+    payload = reverseSearchFourPillars(args.reverse, { dayBoundary: config.dayBoundary, startYear: Number(args.start ?? 1000), endYear: Number(args.end ?? 2100), maxResults: Number(args.limit ?? 60), sex: args.sex });
   } else {
     const supplied = fileInput && typeof fileInput === "object" ? fileInput : {};
     const positional = args._.join(" ").trim();

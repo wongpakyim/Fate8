@@ -49,7 +49,27 @@ test("reverse lookup round-trips a generated chart", () => {
   const reverse = reverseSearchBazi(result.fourPillars.compact, { startYear: 1992, endYear: 1992, longitude: 113.27 });
   assert.equal(reverse.total, 1);
   assert.equal(reverse.matches[0].solarTime, "1992-03-15 14:00");
+  assert.equal(reverse.matches[0].timeRange, "1992-03-15 13:00—1992-03-15 14:59");
   assert.equal(reverse.matches[0].fourPillars, result.fourPillars.text);
+  assert.deepEqual(reverse.basis.administrativeDivisions, { province: "反排", prefecture: "反排", county: "反排" });
+  assert.equal(reverse.basis.longitude, 120);
+  assert.equal(reverse.basis.solarTimeMode, "none");
+});
+
+test("reverse lookup ignores birthplace and true-solar settings and finds the Xining chart", () => {
+  const reverse = reverseSearchBazi("丁卯 壬寅 癸丑 乙卯", {
+    startYear: 1987,
+    endYear: 1987,
+    longitude: 101.705357,
+    timezoneOffset: 7,
+    solarTimeMode: "apparent",
+  });
+  assert.equal(reverse.total, 1);
+  assert.equal(reverse.matches[0].solarTime, "1987-03-05 06:00");
+  assert.equal(reverse.matches[0].timeRange, "1987-03-05 05:00—1987-03-05 06:59");
+  assert.equal(reverse.matches[0].location, "反排");
+  assert.equal(reverse.matches[0].longitude, 120);
+  assert.equal(reverse.matches[0].solarTimeMode, "none");
 });
 
 test("produces a human-readable text report", () => {

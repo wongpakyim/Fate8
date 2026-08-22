@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import divisionSource from "@/data/china-divisions.json";
 import { formatBirthCode, parseBirthCode } from "@/lib/birth-code.mjs";
-import { calculateFourPillars, getAnnualPillar, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
+import { calculateFourPillars, getAnnualPillar, REVERSE_SEARCH_BASIS, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
 import { formatBaziText, getBaziNodeRelations, getBaziNodeStates } from "@/lib/chart-presentation.mjs";
 import { buildReadingSession } from "@/lib/reading-session.mjs";
 import { formatLiuRenText } from "@/lib/liu-ren.mjs";
@@ -60,6 +60,7 @@ export default function Home() {
   const [districtCode, setDistrictCode] = useState(defaultDistrictCode);
   const [manualLongitude, setManualLongitude] = useState(false);
   const [longitudeInput, setLongitudeInput] = useState("113.267");
+  const [locationOverride, setLocationOverride] = useState<string | null>(null);
   const [timezone, setTimezone] = useState("8");
   const [dayBoundary, setDayBoundary] = useState<23 | 24>(23);
   const [solarTimeMode, setSolarTimeMode] = useState<"apparent" | "mean" | "none">("apparent");
@@ -103,7 +104,7 @@ export default function Home() {
   }
 
   function makeCalculation(solarTime: string, chartSex = sex) {
-    return calculateFourPillars({ solarTime, sex: chartSex, location: manualLongitude ? "手工经度" : placeName, longitude: effectiveLongitude, latitude: manualLongitude ? undefined : locationCenter.latitude, timezoneOffset: Number(timezone) }, { dayBoundary, solarTimeMode });
+    return calculateFourPillars({ solarTime, sex: chartSex, location: locationOverride ?? (manualLongitude ? "手工经度" : placeName), longitude: effectiveLongitude, latitude: manualLongitude ? undefined : locationCenter.latitude, timezoneOffset: Number(timezone) }, { dayBoundary, solarTimeMode });
   }
 
   function submitChart(event?: React.FormEvent) {
@@ -162,7 +163,7 @@ export default function Home() {
   function searchReverse(event: React.FormEvent) {
     event.preventDefault();
     try {
-      const found = reverseSearchFourPillars(reverseText, { startYear: Number(reverseStart), endYear: Number(reverseEnd), maxResults: 60, longitude: effectiveLongitude, timezoneOffset: Number(timezone), dayBoundary, solarTimeMode, sex });
+      const found = reverseSearchFourPillars(reverseText, { startYear: Number(reverseStart), endYear: Number(reverseEnd), maxResults: 60, dayBoundary, sex });
       setReverseResult(found);
       setReverseError("");
     } catch (caught) {
@@ -173,8 +174,14 @@ export default function Home() {
   function applyReverseMatch(solarTime: string) {
     const value = solarTime.replace(" ", "T");
     setDateTime(value);
+    setTextTime(formatBirthCode(value, sex));
     setInputMode("picker");
-    const nextCalculation = makeCalculation(solarTime);
+    setManualLongitude(true);
+    setLongitudeInput(String(REVERSE_SEARCH_BASIS.longitude));
+    setLocationOverride(REVERSE_SEARCH_BASIS.location);
+    setTimezone(String(REVERSE_SEARCH_BASIS.timezoneOffset));
+    setSolarTimeMode(REVERSE_SEARCH_BASIS.solarTimeMode);
+    const nextCalculation = calculateFourPillars({ solarTime, sex, location: REVERSE_SEARCH_BASIS.location, longitude: REVERSE_SEARCH_BASIS.longitude, timezoneOffset: REVERSE_SEARCH_BASIS.timezoneOffset }, { dayBoundary, solarTimeMode: REVERSE_SEARCH_BASIS.solarTimeMode });
     setCalculation(nextCalculation);
     setSelectedNode(null);
     setSelectedPath(null);
@@ -224,15 +231,15 @@ export default function Home() {
           </div>
 
           <div className="divider" />
-          <div className="field-title-row"><span className="field-label">出生地</span><button type="button" className="text-button" onClick={() => setManualLongitude((value) => !value)}>{manualLongitude ? "使用行政区" : "直接输入经度"}</button></div>
+          <div className="field-title-row"><span className="field-label">出生地</span><button type="button" className="text-button" onClick={() => { setLocationOverride(null); setManualLongitude((value) => !value); }}>{manualLongitude ? "使用行政区" : "直接输入经度"}</button></div>
           {!manualLongitude ? <>
             <div className="location-row">
-              <select aria-label="省份" value={province.code} onChange={(event) => selectProvince(event.target.value)}>{divisions.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
-              <select aria-label="地级市" value={city?.code} onChange={(event) => selectCity(event.target.value)}>{cities.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
-              <select aria-label="区县" value={district?.code} onChange={(event) => setDistrictCode(event.target.value)}>{districts.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+              <select aria-label="省份" value={province.code} onChange={(event) => { setLocationOverride(null); selectProvince(event.target.value); }}>{divisions.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+              <select aria-label="地级市" value={city?.code} onChange={(event) => { setLocationOverride(null); selectCity(event.target.value); }}>{cities.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+              <select aria-label="区县" value={district?.code} onChange={(event) => { setLocationOverride(null); setDistrictCode(event.target.value); }}>{districts.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
             </div>
             <div className="location-meta"><span>东经 {locationCenter.longitude?.toFixed(3)}°</span><span>北纬 {locationCenter.latitude?.toFixed(3)}°</span><span className="data-count">3,209 个行政区</span></div>
-          </> : <div className="manual-longitude"><label>经度（东经为正）<input type="number" min="-180" max="180" step="0.001" value={longitudeInput} onChange={(event) => setLongitudeInput(event.target.value)} /></label><p>例：广州 113.27，北京 116.41。可输入出生医院的精确经度。</p></div>}
+          </> : <div className="manual-longitude"><label>经度（东经为正）<input type="number" min="-180" max="180" step="0.001" value={longitudeInput} onChange={(event) => { setLocationOverride(null); setLongitudeInput(event.target.value); }} /></label>{locationOverride === REVERSE_SEARCH_BASIS.location ? <p><strong>省 / 地级市 / 县：反排</strong><br />出生地按“反排”记录，固定使用东经 120° 标准时。</p> : <p>例：广州 113.27，北京 116.41。可输入出生医院的精确经度。</p>}</div>}
 
           <details className="settings">
             <summary>排盘口径设置 <span>{solarTimeMode === "apparent" ? "真太阳时" : solarTimeMode === "mean" ? "地方平太阳时" : "标准时"} · {dayBoundary}时换日</span></summary>
