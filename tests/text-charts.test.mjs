@@ -32,6 +32,7 @@ test("Liu Ren text contains right-to-left four lessons and a twelve-palace heave
   assert.equal((heavenPlate.match(/旬遁 /g) || []).length, 12);
   assert.equal((heavenPlate.match(/天盘神煞 /g) || []).length, 12);
   assert.equal((heavenPlate.match(/地盘神煞 /g) || []).length, 12);
+  assert.doesNotMatch(heavenPlate, /地盘 [子丑寅卯辰巳午未申酉戌亥]宫/);
   assert.match(heavenPlate, /上巳午未申／左辰卯／右酉戌／下寅丑子亥/);
   const ringWidths = heavenPlate.slice(heavenPlate.indexOf("┌")).split("\n").map(textDisplayWidth);
   assert.equal(new Set(ringWidths).size, 1);

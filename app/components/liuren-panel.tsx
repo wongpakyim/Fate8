@@ -48,7 +48,6 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
             <p>天盘 · {cell.heaven.polarity}<b className={elementClass(cell.heaven.element)}>{cell.heaven.element}</b></p>
             <div className="liuren-palace-shensha liuren-heaven-shensha"><small className="liuren-palace-layer-title">天盘神煞</small>{cell.heavenShenShaGroups.length ? cell.heavenShenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.join(" · ")}</span></p>) : <span>无神煞</span>}</div>
             <footer className="liuren-palace-earth">
-              <strong><b className={elementClass(cell.earth.element)}>{cell.earth.name}</b>宫</strong>
               <div className="liuren-palace-shensha liuren-earth-shensha"><small className="liuren-palace-layer-title">地盘神煞</small>{cell.earthShenShaGroups.length ? cell.earthShenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.join(" · ")}</span></p>) : <span>无神煞</span>}</div>
             </footer>
           </article>;
