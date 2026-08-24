@@ -42,7 +42,8 @@ export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy }: { 
       </header>
       <div className="qimen-nine-grid" aria-label="拆补法奇门九宫盘">
         {result.palaces.map((palace) => <article className={`qimen-palace ${palace.number === 5 ? "center" : ""} ${palace.isChiefStar ? "chief-star" : ""} ${palace.isChiefDoor ? "chief-door" : ""}`} key={palace.number}>
-          <header><div className="qimen-palace-location"><strong>{palace.name}</strong><span>{palace.direction}{palace.branches.length ? ` · ${palace.branches.join("、")}` : ""}</span></div><div className="qimen-flags">{palace.isChiefStar && <b className="chief">值符</b>}{palace.isChiefDoor && <b className="chief-door-flag">值使</b>}{palace.isVoid && <b>空亡</b>}{palace.isHorse && <b>马星</b>}</div></header>
+          {palace.number !== 5 && <button type="button" className="qimen-response-focus" aria-describedby={`qimen-response-${palace.number}`}>查看{palace.name}十干克应</button>}
+          <div className="qimen-flags">{palace.isChiefStar && <b className="chief">值符</b>}{palace.isChiefDoor && <b className="chief-door-flag">值使</b>}{palace.isVoid && <b>空亡</b>}{palace.isHorse && <b>马星</b>}</div>
           {palace.number === 5 ? <div className="qimen-center-content"><small>天禽寄坤二</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>中宫地盘奇仪</span></div> : <div className="qimen-palace-body">
             <div className="qimen-pair-row">
               <section className="qimen-deity-value"><small>八神</small><strong>{palace.deity}</strong></section>
@@ -54,6 +55,7 @@ export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy }: { 
             </div>
             <div className="qimen-door-value"><small>八门</small><strong>{palace.door}</strong></div>
           </div>}
+          {palace.number !== 5 && <aside className="qimen-stem-response" id={`qimen-response-${palace.number}`} role="tooltip"><small>十干克应 · 一般解读</small>{palace.stemResponses.map((response) => <p key={response.key}><strong>{response.combination}</strong><b>{response.relation}</b><span>{response.interpretation}</span></p>)}<em>须合参八门、九星、八神与宫位旺衰。</em></aside>}
         </article>)}
       </div>
       <div className="qimen-legend"><span><i className="legend-chief" />值符九星</span><span><i className="legend-door" />值使八门</span><span><i className="legend-status" />空亡、马星</span></div>

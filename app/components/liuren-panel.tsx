@@ -46,7 +46,7 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
           return <article className="liuren-classic-cell" style={{ gridRow: row, gridColumn: column }} key={cell.earth.name}>
             <header><span><small>{cell.earth.name}宫</small><strong className={elementClass(cell.heaven.element)}>{cell.heaven.name}</strong></span><em className={elementClass(cell.heavenlyGeneralDetail.element)}>{cell.heavenlyGeneral}</em></header>
             <p>上神 · {cell.heaven.polarity}<b className={elementClass(cell.heaven.element)}>{cell.heaven.element}</b></p>
-            <div className="liuren-palace-shensha">{cell.shenSha.length ? cell.shenSha.map((star) => <b key={star}>{star}</b>) : <span>无神煞</span>}</div>
+            <div className="liuren-palace-shensha">{cell.shenShaGroups.length ? cell.shenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.join(" · ")}</span></p>) : <span>无神煞</span>}</div>
           </article>;
         })}
 
@@ -56,7 +56,7 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
             {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
           </div>
           <div className="classic-lessons">
-            <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><span className={elementClass(lesson.heavenlyGeneralDetail.element)}>{lesson.heavenlyGeneral}</span><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em>{lesson.relation}</em></p>)}</div>
+            <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em className={elementClass(lesson.earthHeavenlyGeneralDetail.element)}><small>地盘贵神</small>{lesson.earthHeavenlyGeneral}</em></p>)}</div>
           </div>
         </section>
       </div>

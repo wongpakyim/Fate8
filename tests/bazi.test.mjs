@@ -131,6 +131,8 @@ test("builds Liu Ren from the exact shared four-pillar result", () => {
   assert.equal(liuRen.fourLessons.length, 4);
   assert.equal(liuRen.threeTransmissions.items.length, 3);
   assert.ok(liuRen.earthPlate.some((palace) => palace.shenSha.length > 0));
+  assert.deepEqual(new Set(liuRen.earthPlate.flatMap((palace) => palace.shenShaGroups.map((group) => group.category))), new Set(["年煞", "月煞", "季煞", "旬煞", "支煞", "干煞"]));
+  assert.ok(liuRen.fourLessons.every((lesson) => lesson.earthHeavenlyGeneral && lesson.earthHeavenlyGeneralDetail.element));
   assert.ok(liuRen.earthPlate.every((palace) => palace.heavenlyGeneralDetail.element));
   assert.match(formatLiuRenText(liuRen), /月将：亥登明/);
 });
@@ -165,6 +167,8 @@ test("builds Chai-Bu rotating Qi Men from the shared four-pillar result", () => 
   assert.deepEqual(new Set(qiMen.palaces.map((palace) => palace.earthInstrument)), new Set(["戊", "己", "庚", "辛", "壬", "癸", "丁", "丙", "乙"]));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.heavenGrowth.length >= palace.branches.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.earthGrowth.length === palace.branches.length));
+  assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.stemResponses.length === palace.heavenInstruments.length));
+  assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.stemResponses.every((response) => response.combination && response.relation && response.interpretation)));
   assert.equal(getTwelveGrowthStage("甲", "辰"), "衰");
   assert.equal(getTwelveGrowthStage("甲", "巳"), "病");
   assert.equal(getTwelveGrowthStage("庚", "酉"), "帝旺");
