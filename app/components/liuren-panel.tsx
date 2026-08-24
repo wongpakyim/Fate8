@@ -56,7 +56,7 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
             {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
           </div>
           <div className="classic-lessons">
-            <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em className={elementClass(lesson.earthHeavenlyGeneralDetail.element)}><small>地盘贵神</small>{lesson.earthHeavenlyGeneral}</em></p>)}</div>
+            <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><span className={elementClass(lesson.heavenlyGeneralDetail.element)}>{lesson.heavenlyGeneral}</span><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em className={elementClass(lesson.earthHeavenlyGeneralDetail.element)}><small>{lesson.earthPalace}宫贵神</small>{lesson.earthHeavenlyGeneral}</em></p>)}</div>
           </div>
         </section>
       </div>

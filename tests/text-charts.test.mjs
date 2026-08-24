@@ -33,6 +33,7 @@ test("Liu Ren text contains right-to-left four lessons and a twelve-palace heave
   const ringWidths = heavenPlate.slice(heavenPlate.indexOf("┌")).split("\n").map(textDisplayWidth);
   assert.equal(new Set(ringWidths).size, 1);
   assert.match(report, /四课（第一课在最右/);
+  assert.match(lessons, /上神贵神/);
   assert.match(lessons, /地盘贵神/);
   assert.doesNotMatch(lessons, /关系 (生泄|上克下|下贼上|比和)/);
   assert.match(report, /天盘十二宫/);

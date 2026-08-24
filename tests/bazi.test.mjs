@@ -146,6 +146,28 @@ test("allows a manual month-general override without changing shared time", () =
   assert.equal(liuRen.source.standardTime, calculation.time.standard);
 });
 
+test("separates the upper and earth-palace generals in the 2026-08-24 noon lessons", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-08-24 12:00", longitude: 120 }, { solarTimeMode: "none" });
+  const liuRen = calculateLiuRen(calculation);
+  const first = liuRen.fourLessons[0];
+  assert.equal(calculation.fourPillars.text, "丙午 丙申 庚午 壬午");
+  assert.equal(first.upper.name, "未");
+  assert.equal(first.heavenlyGeneral, "天空");
+  assert.equal(first.lower.name, "庚");
+  assert.equal(first.earthPalace, "申");
+  assert.equal(first.earthHeavenlyGeneral, "白虎");
+
+  const starsByPalace = Object.fromEntries(liuRen.earthPlate.map((palace) => [palace.earth.name, palace.shenSha]));
+  assert.ok(starsByPalace.未.includes("血支"));
+  assert.ok(starsByPalace.寅.includes("血忌"));
+  assert.ok(starsByPalace.辰.includes("天医"));
+  assert.ok(starsByPalace.戌.includes("地医"));
+  assert.ok(starsByPalace.巳.includes("飞魂"));
+  assert.ok(starsByPalace.辰.includes("月厌"));
+  assert.ok(starsByPalace.子.includes("游都"));
+  assert.ok(starsByPalace.午.includes("鲁都"));
+});
+
 test("rejects Liu Ren input that did not come from the four-pillar module", () => {
   assert.throws(() => calculateLiuRen({}), /calculateFourPillars/);
 });
