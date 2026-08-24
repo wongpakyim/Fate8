@@ -19,7 +19,7 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /四柱见山河/);
   assert.match(html, /八字反查/);
   assert.match(html, /2 × 4 正交网格/);
-  assert.match(html, /16 组路径 · 8 个起点双向排列/);
+  assert.match(html, /路径藏干展开 · 强弱用神/);
   assert.match(html, /按起始节点排列的连续三节点组合/);
   assert.match(html, /十神·六亲/);
   assert.match(html, /天干·五行/);
@@ -39,6 +39,8 @@ test("server-renders the finished product page and metadata", async () => {
   assert.ok(pillarIndex < luckIndex && luckIndex < nodeIndex, "八字节点模块应独立置于大运流年之后");
   const nodeModule = html.slice(nodeIndex, html.indexOf("<footer>", nodeIndex));
   assert.equal((nodeModule.match(/path-start-group/g) || []).length, 8);
+  assert.match(nodeModule, /日干强弱/);
+  assert.match(nodeModule, /喜克、泄、耗/);
   assert.doesNotMatch(nodeModule, /十二长生|旺相休囚死|十神|六亲|神煞|element-/);
   assert.match(html, /十二长生/);
   assert.match(html, /神煞/);
