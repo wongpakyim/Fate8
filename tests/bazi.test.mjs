@@ -130,6 +130,10 @@ test("builds Liu Ren from the exact shared four-pillar result", () => {
   assert.equal(liuRen.earthPlate.length, 12);
   assert.equal(liuRen.fourLessons.length, 4);
   assert.equal(liuRen.threeTransmissions.items.length, 3);
+  assert.equal(liuRen.xunDun.start, "甲申");
+  assert.deepEqual(liuRen.xunDun.voidBranches, ["午", "未"]);
+  assert.equal(liuRen.earthPlate.filter((palace) => palace.dunStem).length, 10);
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.dunStem?.name || "空"), ["壬", "甲", "戊"]);
   assert.ok(liuRen.earthPlate.some((palace) => palace.shenSha.length > 0));
   assert.deepEqual(new Set(liuRen.earthPlate.flatMap((palace) => palace.shenShaGroups.map((group) => group.category))), new Set(["年煞", "月煞", "季煞", "旬煞", "支煞", "干煞"]));
   assert.ok(liuRen.fourLessons.every((lesson) => lesson.earthHeavenlyGeneral && lesson.earthHeavenlyGeneralDetail.element));

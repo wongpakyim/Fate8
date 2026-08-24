@@ -44,16 +44,20 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
         {result.earthPlate.map((cell) => {
           const [row, column] = platePositions[cell.earth.index];
           return <article className="liuren-classic-cell" style={{ gridRow: row, gridColumn: column }} key={cell.earth.name}>
-            <header><span><small>{cell.earth.name}宫</small><strong className={elementClass(cell.heaven.element)}>{cell.heaven.name}</strong></span><em className={elementClass(cell.heavenlyGeneralDetail.element)}>{cell.heavenlyGeneral}</em></header>
+            <header><span><small>{cell.earth.name}宫</small><b className={cell.dunStem ? elementClass(cell.dunStem.element) : "dun-stem-empty"}>{cell.dunStem?.name || "空"}</b><strong className={elementClass(cell.heaven.element)}>{cell.heaven.name}</strong></span><em className={elementClass(cell.heavenlyGeneralDetail.element)}>{cell.heavenlyGeneral}</em></header>
             <p>上神 · {cell.heaven.polarity}<b className={elementClass(cell.heaven.element)}>{cell.heaven.element}</b></p>
             <div className="liuren-palace-shensha">{cell.shenShaGroups.length ? cell.shenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.join(" · ")}</span></p>) : <span>无神煞</span>}</div>
           </article>;
         })}
 
         <section className="liuren-classic-center">
+          <div className="classic-liuren-summary">
+            <p><small>六壬卦四柱</small>{pillars.map((pillar, index) => <span key={pillarLabels[index]}><b className={elementClass(pillar[0])}>{pillar[0]}</b><b className={elementClass(pillar[1])}>{pillar[1]}</b></span>)}</p>
+            <p><small>月将</small><strong><b className={elementClass(result.monthGeneral.element)}>{result.monthGeneral.branch}</b>{result.monthGeneral.name}</strong><small>占时</small><strong className={elementClass(result.divinationTime.branch.element)}>{result.divinationTime.branch.name}</strong><small>旬遁</small><strong>{result.xunDun.start}</strong></p>
+          </div>
           <div className="classic-transmissions">
-            <small>三传</small>
-            {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
+            <small>三传 · 六亲／遁干／支神／天将</small>
+            {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><i className={item.dunStem ? elementClass(item.dunStem.element) : "dun-stem-empty"}>{item.dunStem?.name || "空"}</i><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
           </div>
           <div className="classic-lessons">
             <div>{result.fourLessons.map((lesson) => <p key={lesson.order}><span className={elementClass(lesson.heavenlyGeneralDetail.element)}>{lesson.heavenlyGeneral}</span><strong className={elementClass(lesson.upper.element)}>{lesson.upper.name}</strong><b className={elementClass(lesson.lower.element)}>{lesson.lower.name}</b><em className={elementClass(lesson.earthHeavenlyGeneralDetail.element)}><small>{lesson.earthPalace}宫贵神</small>{lesson.earthHeavenlyGeneral}</em></p>)}</div>

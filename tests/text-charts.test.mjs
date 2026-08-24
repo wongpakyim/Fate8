@@ -29,6 +29,7 @@ test("Liu Ren text contains right-to-left four lessons and a twelve-palace heave
   assert.ok(lessonHeading.indexOf("二课") < lessonHeading.indexOf("一课"));
   assert.equal((heavenPlate.match(/上神 /g) || []).length, 12);
   assert.equal((heavenPlate.match(/天将 /g) || []).length, 12);
+  assert.equal((heavenPlate.match(/旬遁 /g) || []).length, 12);
   assert.match(heavenPlate, /上巳午未申／左辰卯／右酉戌／下寅丑子亥/);
   const ringWidths = heavenPlate.slice(heavenPlate.indexOf("┌")).split("\n").map(textDisplayWidth);
   assert.equal(new Set(ringWidths).size, 1);
@@ -37,6 +38,7 @@ test("Liu Ren text contains right-to-left four lessons and a twelve-palace heave
   assert.match(lessons, /地盘贵神/);
   assert.doesNotMatch(lessons, /关系 (生泄|上克下|下贼上|比和)/);
   assert.match(report, /天盘十二宫/);
+  assert.match(report, /旬遁 {6}甲申旬/);
 });
 
 test("Qi Men text is a visual 3-by-3 palace grid with full palace data", () => {
