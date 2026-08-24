@@ -135,6 +135,8 @@ test("builds Liu Ren from the exact shared four-pillar result", () => {
   assert.equal(liuRen.earthPlate.filter((palace) => palace.dunStem).length, 10);
   assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.dunStem?.name || "空"), ["壬", "甲", "戊"]);
   assert.ok(liuRen.earthPlate.some((palace) => palace.shenSha.length > 0));
+  assert.ok(liuRen.earthPlate.every((palace) => Array.isArray(palace.heavenShenSha) && Array.isArray(palace.earthShenSha)));
+  assert.ok(liuRen.earthPlate.every((palace) => palace.shenSha === palace.earthShenSha && palace.shenShaGroups === palace.earthShenShaGroups));
   assert.deepEqual(new Set(liuRen.earthPlate.flatMap((palace) => palace.shenShaGroups.map((group) => group.category))), new Set(["年煞", "月煞", "季煞", "旬煞", "支煞", "干煞"]));
   assert.ok(liuRen.fourLessons.every((lesson) => lesson.earthHeavenlyGeneral && lesson.earthHeavenlyGeneralDetail.element));
   assert.ok(liuRen.earthPlate.every((palace) => palace.heavenlyGeneralDetail.element));
@@ -162,6 +164,10 @@ test("separates the upper and earth-palace generals in the 2026-08-24 noon lesso
   assert.equal(first.earthHeavenlyGeneral, "白虎");
 
   const starsByPalace = Object.fromEntries(liuRen.earthPlate.map((palace) => [palace.earth.name, palace.shenSha]));
+  const chenPalace = liuRen.earthPlate.find((palace) => palace.earth.name === "辰");
+  assert.equal(chenPalace.heaven.name, "卯");
+  assert.ok(chenPalace.heavenShenSha.includes("桃花"));
+  assert.ok(chenPalace.earthShenSha.includes("天医"));
   assert.ok(starsByPalace.未.includes("血支"));
   assert.ok(starsByPalace.寅.includes("血忌"));
   assert.ok(starsByPalace.辰.includes("天医"));
