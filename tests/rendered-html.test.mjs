@@ -25,6 +25,7 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /地支·本气/);
   assert.match(html, /藏干·六亲/);
   assert.match(html, /hidden-focus/);
+  assert.doesNotMatch(html, /chart-relation-panel|动态信息 · 八字八格/);
   assert.match(html, /术数排盘模块/);
   assert.match(html, /八字反排/);
   assert.match(html, /六壬/);

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { getAnnualPillar } from "@/lib/four-pillars.mjs";
-import { buildBaziChart, formatBaziText, getBaziFocusView, getBaziRelationsByReference, getDefaultLuckSelection } from "@/lib/chart-presentation.mjs";
+import { buildBaziChart, formatBaziText, getBaziFocusView, getDefaultLuckSelection } from "@/lib/chart-presentation.mjs";
 import { elementClass } from "./five-elements";
 
 type BaziResult = ReturnType<typeof buildBaziChart>;
@@ -66,7 +66,6 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
   const natalView = getBaziFocusView(result, focusReference);
   const luckView = getBaziFocusView(result, focusReference, result.luck.cycles).pillars;
   const annualView = getBaziFocusView(result, focusReference, annualPillars).pillars;
-  const nodeRelations = getBaziRelationsByReference(result, focusReference);
 
   function chooseCycle(cycleIndex: number) {
     const cycle = result.luck.cycles[cycleIndex];
@@ -159,14 +158,5 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
       </div>)}
     </div>
 
-    <section className="chart-relation-panel" aria-live="polite">
-      <header><div><small>动态信息 · 八字八格</small><strong>{nodeRelations.target.meta}{nodeRelations.target.char}</strong><span>以「{nodeRelations.reference.name}{nodeRelations.reference.element}」重算</span></div><button type="button" onClick={resetDayMaster}>恢复日干</button></header>
-      <div className="node-relation-grid">{nodeRelations.relations.map((relation) => <article className={relation.isSelf ? "self" : ""} key={relation.id}>
-        <div><small>{relation.meta} · {relation.element}</small><strong className={elementClass(relation.element)}>{relation.char}</strong>{relation.isSelf && <em>计算点</em>}</div>
-        <p>{relation.kind === "stem" ? <><b>十神·六亲</b><span>{relation.tenGod} · {relation.sixKin}</span></> : <><b>本气关系</b><span>{relation.mainQi.name}{relation.mainQiTenGod} · {relation.mainQiSixKin}</span></>}</p>
-        <p><b>藏干关系</b><span>{relation.kind === "branch" ? relation.hiddenTenGods.map((hidden) => `${hidden.name}${hidden.tenGod}（${hidden.sixKin}）`).join("、") : "—"}</span></p>
-        <p><b>十二长生</b><span>{relation.relationGrowth}</span></p><p><b>月令旺衰</b><span>{relation.monthStatus} · {relation.monthGrowth}</span></p><p><b>坐宫旺衰</b><span>{relation.seatGrowth}</span></p><p><b>神煞</b><span>{relation.shenSha.join("、") || "无"}</span></p>
-      </article>)}</div>
-    </section>
   </article>;
 }
