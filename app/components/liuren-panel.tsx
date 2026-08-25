@@ -43,7 +43,9 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
       <div className="liuren-classic-board" aria-label="大六壬传统天地盘">
         {result.earthPlate.map((cell) => {
           const [row, column] = platePositions[cell.earth.index];
-          return <article className="liuren-classic-cell" style={{ gridRow: row, gridColumn: column }} key={cell.earth.name}>
+          const voidClassName = `${cell.earthVoid ? " is-earth-void" : ""}${cell.heavenVoid ? " is-heaven-void" : ""}`;
+          const voidLabel = [cell.earthVoid ? "地盘空亡" : "", cell.heavenVoid ? "天盘空亡" : ""].filter(Boolean).join("、");
+          return <article className={`liuren-classic-cell${voidClassName}`} style={{ gridRow: row, gridColumn: column }} aria-label={`${cell.earth.name}宫，天盘${cell.heaven.name}${voidLabel ? `，${voidLabel}` : ""}`} title={voidLabel || undefined} key={cell.earth.name}>
             <header><span><b className={cell.dunStem ? elementClass(cell.dunStem.element) : "dun-stem-empty"}>{cell.dunStem?.name || "空"}</b><strong className={elementClass(cell.heaven.element)}>{cell.heaven.name}</strong></span><em className={elementClass(cell.heavenlyGeneralDetail.element)}>{cell.heavenlyGeneral}</em></header>
             <p>天盘 · {cell.heaven.polarity}<b className={elementClass(cell.heaven.element)}>{cell.heaven.element}</b></p>
             <div className="liuren-palace-shensha liuren-heaven-shensha"><small className="liuren-palace-layer-title">天盘神煞</small>{cell.heavenShenShaGroups.length ? cell.heavenShenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.join(" · ")}</span></p>) : <span>无神煞</span>}</div>
