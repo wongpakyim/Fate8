@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { calculateBazi, formatBaziText, getAnnualPillar, parseSolarInput, reverseSearchBazi } from "../lib/bazi.mjs";
 import { calculateFourPillars } from "../lib/four-pillars.mjs";
-import { buildBaziChart, getBaziNodeRelations, getBaziNodeStates } from "../lib/chart-presentation.mjs";
+import { buildBaziChart, getBaziFocusView, getBaziNodeRelations, getBaziNodeStates, getBaziRelationsByReference, getDefaultLuckSelection } from "../lib/chart-presentation.mjs";
 import { calculateLiuRen, formatLiuRenText } from "../lib/liu-ren.mjs";
 import { calculateQiMen, formatQiMenText } from "../lib/qi-men.mjs";
 import { buildReadingSession } from "../lib/reading-session.mjs";
@@ -114,6 +114,36 @@ test("builds reusable month-state nodes and an eight-cell comparison matrix", ()
   assert.match(branchRelations.reference.source, /本气/);
   assert.ok(chart.fourPillars.year.stem.sixKin);
   assert.ok(stemRelations.relations.every((relation) => relation.kind === "stem" ? relation.sixKin : relation.mainQiSixKin));
+});
+
+test("recalculates BaZi relations from natal, luck, or annual stems and branch main qi", () => {
+  const chart = buildBaziChart(calculateFourPillars({ solarTime: "1992-03-15 14:30", longitude: 113.27 }));
+  const dayFocus = getBaziFocusView(chart, { kind: "stem", stemIndex: chart.fourPillars.day.stem.index, branchIndex: chart.fourPillars.day.branch.index, source: "日干" });
+  const monthFocus = getBaziFocusView(chart, { kind: "stem", stemIndex: chart.fourPillars.month.stem.index, branchIndex: chart.fourPillars.month.branch.index, source: "月干" });
+  assert.equal(dayFocus.reference.source, "日干");
+  assert.equal(monthFocus.reference.source, "月干");
+  assert.match(monthFocus.reference.monthStatus, /^(旺|相|休|囚|死)$/);
+  assert.ok(monthFocus.reference.monthGrowth);
+  assert.ok(monthFocus.reference.seatGrowth);
+  assert.notDeepEqual(dayFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod), monthFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod));
+  assert.ok(monthFocus.pillars.every((pillar) => pillar.growthStage && Array.isArray(pillar.shenSha)));
+
+  const annual = getAnnualPillar(2026);
+  const annualBranchRelations = getBaziRelationsByReference(chart, { kind: "branch", branchIndex: annual.branch.index, source: "2026流年地支" });
+  assert.equal(annual.value, "丙午");
+  assert.equal(annualBranchRelations.reference.name, "丁");
+  assert.match(annualBranchRelations.reference.source, /流年地支/);
+});
+
+test("defaults luck years to the current year or the nearest same-Ganzhi year for old charts", () => {
+  const recent = buildBaziChart(calculateFourPillars({ solarTime: "1992-03-15 14:30", longitude: 113.27 }));
+  assert.deepEqual(getDefaultLuckSelection(recent, 2026), { cycleIndex: 2, year: 2026, reason: "当前流年", pillar: "丙午" });
+
+  const old = buildBaziChart(calculateFourPillars({ solarTime: "1940-03-15 14:30", longitude: 113.27 }));
+  const oldDefault = getDefaultLuckSelection(old, 2026);
+  assert.equal(oldDefault.reason, "同干支最近流年");
+  assert.equal(oldDefault.pillar, "丙午");
+  assert.equal(getAnnualPillar(oldDefault.year).value, getAnnualPillar(2026).value);
 });
 
 test("builds Liu Ren from the exact shared four-pillar result", () => {

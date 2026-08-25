@@ -22,7 +22,9 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /路径藏干展开 · 强弱用神/);
   assert.match(html, /按起始节点排列的连续三节点组合/);
   assert.match(html, /十神·六亲/);
-  assert.match(html, /天干·五行/);
+  assert.match(html, /地支·本气/);
+  assert.match(html, /藏干·六亲/);
+  assert.match(html, /hidden-focus/);
   assert.match(html, /术数排盘模块/);
   assert.match(html, /八字反排/);
   assert.match(html, /六壬/);
@@ -33,10 +35,14 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /女 · 坤造 · 0/);
   assert.match(html, /男 · 乾造 · 1/);
   assert.doesNotMatch(html, /大六壬排盘|时家奇门 · 拆补法|八字反查出生时刻/);
+  const luckIndex = html.indexOf('<section class="bazi-luck-panel"');
   const pillarIndex = html.indexOf('<div class="pillars"');
-  const luckIndex = html.indexOf('<section class="detail-section luck-only"');
   const nodeIndex = html.indexOf('<section class="manhattan-panel"');
-  assert.ok(pillarIndex < luckIndex && luckIndex < nodeIndex, "八字节点模块应独立置于大运流年之后");
+  assert.ok(luckIndex < pillarIndex && pillarIndex < nodeIndex, "大运流年应置于八字命盘上方，八字节点保持在末尾");
+  assert.match(html, /当前计算点/);
+  assert.match(html, /恢复日干/);
+  assert.match(html, /月令旺衰/);
+  assert.match(html, /坐宫旺衰/);
   const nodeModule = html.slice(nodeIndex, html.indexOf("<footer>", nodeIndex));
   assert.equal((nodeModule.match(/path-start-group/g) || []).length, 8);
   assert.match(nodeModule, /日干强弱/);

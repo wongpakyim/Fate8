@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react";
 import divisionSource from "@/data/china-divisions.json";
 import { formatBirthCode, parseBirthCode } from "@/lib/birth-code.mjs";
-import { calculateFourPillars, getAnnualPillar, REVERSE_SEARCH_BASIS, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
-import { formatBaziText, getBaziNodeRelations, getBaziNodeStates } from "@/lib/chart-presentation.mjs";
+import { calculateFourPillars, REVERSE_SEARCH_BASIS, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
+import { formatBaziText, getBaziNodeStates } from "@/lib/chart-presentation.mjs";
 import { buildReadingSession } from "@/lib/reading-session.mjs";
 import { formatLiuRenText } from "@/lib/liu-ren.mjs";
 import { formatQiMenText } from "@/lib/qi-men.mjs";
+import { BaziChartPanel } from "@/app/components/bazi-chart-panel";
 import { BaziNodePanel } from "@/app/components/bazi-node-panel";
 import { LiuRenPanel } from "@/app/components/liuren-panel";
 import { ModuleTabs, type ModuleTab } from "@/app/components/module-tabs";
@@ -41,10 +42,6 @@ function districtsFor(city?: Division): Division[] {
   return city?.children?.length ? city.children : city ? [city] : [];
 }
 
-function elementClass(element: string) {
-  return `element-${({ 木: "wood", 火: "fire", 土: "earth", 金: "metal", 水: "water" } as Record<string, string>)[element]}`;
-}
-
 function initialCalculation() {
   return calculateFourPillars({ solarTime: "1992-03-15 14:30", sex: "male", location: "广东省 广州市 越秀区", longitude: 113.267, latitude: 23.129, timezoneOffset: 8 }, { dayBoundary: 23, solarTimeMode: "apparent" });
 }
@@ -68,9 +65,7 @@ export default function Home() {
   const [calculation, setCalculation] = useState<FourPillarsCalculation>(initialCalculation);
   const [monthGeneralMode, setMonthGeneralMode] = useState<"auto" | "manual">("auto");
   const [manualMonthGeneral, setManualMonthGeneral] = useState("子");
-  const [selectedNode, setSelectedNode] = useState<number | null>(null);
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
-  const [selectedLuck, setSelectedLuck] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [copiedPanel, setCopiedPanel] = useState<"bazi" | "liuren" | "qimen" | null>(null);
   const [reverseText, setReverseText] = useState(calculation.fourPillars.text);
@@ -117,9 +112,7 @@ export default function Home() {
       setSex(chartSex);
       if (codedInput) setDateTime(codedInput.solarTime.slice(0, 16).replace(" ", "T"));
       setCalculation(nextCalculation);
-      setSelectedNode(null);
       setSelectedPath(null);
-      setSelectedLuck(null);
       setInputCollapsed(true);
       setError("");
     } catch (caught) {
@@ -183,9 +176,7 @@ export default function Home() {
     setSolarTimeMode(REVERSE_SEARCH_BASIS.solarTimeMode);
     const nextCalculation = calculateFourPillars({ solarTime, sex, location: REVERSE_SEARCH_BASIS.location, longitude: REVERSE_SEARCH_BASIS.longitude, timezoneOffset: REVERSE_SEARCH_BASIS.timezoneOffset }, { dayBoundary, solarTimeMode: REVERSE_SEARCH_BASIS.solarTimeMode });
     setCalculation(nextCalculation);
-    setSelectedNode(null);
     setSelectedPath(null);
-    setSelectedLuck(null);
     setInputCollapsed(true);
     setActiveTab("bazi");
     window.setTimeout(() => document.querySelector("#chart")?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -193,11 +184,7 @@ export default function Home() {
 
   const session = useMemo(() => buildReadingSession(calculation, { liuRen: { monthGeneral: monthGeneralMode === "manual" ? manualMonthGeneral : undefined }, qiMen: { method: "chai-bu" } }), [calculation, monthGeneralMode, manualMonthGeneral]);
   const result = session.bazi;
-  const pillars = [result.fourPillars.year, result.fourPillars.month, result.fourPillars.day, result.fourPillars.hour];
   const baziNodes = getBaziNodeStates(result);
-  const nodeRelations = selectedNode == null ? null : getBaziNodeRelations(result, selectedNode);
-  const selectedCycle = selectedLuck == null ? null : result.luck.cycles[selectedLuck];
-  const annualYears = selectedCycle ? Array.from({ length: 10 }, (_, index) => ({ ...getAnnualPillar(selectedCycle.startYear + index), age: Number((selectedCycle.startAge + index).toFixed(2)) })) : [];
   const liuRen = session.liuRen;
   const qiMen = session.qiMen;
 
@@ -253,62 +240,12 @@ export default function Home() {
           <p className="privacy">仅在当前浏览器内计算，不上传或保存出生信息</p>
         </form>}
 
-        <article className="chart-card" aria-live="polite">
-          <div className="chart-head">
-            <div><span className="step">02</span><h2>四柱命盘</h2><span className="chart-code">{result.fourPillars.compact}</span></div>
-            <div className="chart-actions"><button type="button" onClick={() => copyPanelText("bazi", formatBaziText(result))}>{copiedPanel === "bazi" ? "盘面信息已复制" : "复制文字简排"}</button><button type="button" onClick={downloadResult}>下载</button></div>
-          </div>
-          <div className="profile-strip">
-            <div><small>命造</small><strong>{result.input.sex === "female" ? "坤造" : "乾造"}</strong></div>
-            <div><small>公历标准时</small><strong>{result.time.standard.slice(0, 16)}</strong></div>
-            <div><small>真太阳时</small><strong>{result.time.trueSolar.slice(0, 16)}</strong></div>
-            <div><small>生肖</small><strong>{result.profile.zodiac}</strong></div>
-          </div>
-          <div className="time-note"><span>校时 {result.time.correctionMinutes > 0 ? "+" : ""}{result.time.correctionMinutes} 分</span><span>{result.input.location || "手工经度"}</span><span>经度 {result.input.longitude.toFixed(3)}°</span><span>{result.profile.monthCommand}</span></div>
-
-          <div className="pillars" aria-label="四柱命盘">
-            <div className="pillar-labels"><span>十神·六亲</span><span>天干·五行</span><span>地支·五行</span><span>藏干十神</span><span>纳音</span><span>十二长生</span><span>神煞</span></div>
-            {pillars.map((pillar, index) => (
-              <div className={`pillar ${index === 2 ? "day-master" : ""}`} key={pillar.label}>
-                <span className="pillar-title">{pillar.label}{index === 2 && <i>命主</i>}</span>
-                <span className="god"><b>{pillar.stem.tenGod}</b><small>{pillar.stem.sixKin}</small></span>
-                <button type="button" className={`stem chart-character ${elementClass(pillar.stem.element)} ${selectedNode === index ? "selected" : ""}`} onClick={() => setSelectedNode(selectedNode === index ? null : index)} aria-pressed={selectedNode === index}><small>{pillar.stem.polarity}{pillar.stem.element}</small><b>{pillar.stem.name}</b><span>月令{baziNodes[index].monthStatus} · {baziNodes[index].monthGrowth}</span></button>
-                <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${selectedNode === index + 4 ? "selected" : ""}`} onClick={() => setSelectedNode(selectedNode === index + 4 ? null : index + 4)} aria-pressed={selectedNode === index + 4}><small>{pillar.branch.zodiac} · {pillar.branch.element}</small><b>{pillar.branch.name}</b><span>月令{baziNodes[index + 4].monthStatus} · 本气{baziNodes[index + 4].mainQi.name}{baziNodes[index + 4].monthGrowth}</span></button>
-                <span className="hidden">{pillar.branch.hiddenStems.map((hidden) => <b key={hidden.name}>{hidden.name}<i>{hidden.tenGod}</i><em>{hidden.sixKin}</em></b>)}</span>
-                <span className="nayin">{pillar.naYin}</span>
-                <span className="growth-stage">{pillar.growthStage}</span>
-                <span className="shensha">{pillar.shenSha.length ? pillar.shenSha.map((star) => <b key={star}>{star}</b>) : "—"}</span>
-              </div>
-            ))}
-          </div>
-
-          {nodeRelations && <section className="chart-relation-panel" aria-live="polite">
-            <header><div><small>动态信息 · 八字对比矩阵</small><strong>{nodeRelations.target.meta}{nodeRelations.target.char}</strong><span>以 {nodeRelations.reference.source}「{nodeRelations.reference.name}{nodeRelations.reference.element}」为参照 · 上排四干，下排四支</span></div><button type="button" onClick={() => setSelectedNode(null)}>关闭</button></header>
-            <div className="node-relation-grid">
-              {nodeRelations.relations.map((relation) => <article className={relation.isSelf ? "self" : ""} key={relation.id}>
-                <div><small>{relation.meta} · {relation.element}</small><strong className={elementClass(relation.element)}>{relation.char}</strong>{relation.isSelf && <em>自身</em>}</div>
-                <p>{relation.kind === "stem" ? <><b>十神·六亲</b><span>{relation.tenGod} · {relation.sixKin}</span></> : <><b>本气关系</b><span>{relation.mainQi.name}{relation.mainQiTenGod} · {relation.mainQiSixKin}</span></>}</p>
-                <p><b>藏干关系</b><span>{relation.kind === "branch" ? relation.hiddenTenGods.map((hidden) => `${hidden.name}${hidden.tenGod}（${hidden.sixKin}）`).join("、") : "—"}</span></p>
-                <p><b>十二长生</b><span>{relation.relationGrowth}</span></p>
-                <p><b>月令旺衰</b><span>{relation.monthStatus}</span></p>
-                <p><b>神煞</b><span>{relation.kind === "branch" ? relation.shenSha.join("、") || "无" : "—"}</span></p>
-              </article>)}
-            </div>
-          </section>}
-
-        </article>
+        <BaziChartPanel key={`${result.time.standard}-${result.fourPillars.compact}`} result={result} copied={copiedPanel === "bazi"} onCopy={(text) => copyPanelText("bazi", text)} onDownload={downloadResult} />
       </section>}
 
       {activeTab === "liuren" && <LiuRenPanel result={liuRen} mode={monthGeneralMode} manualMonthGeneral={manualMonthGeneral} copied={copiedPanel === "liuren"} onCopy={() => copyPanelText("liuren", formatLiuRenText(liuRen))} onModeChange={setMonthGeneralMode} onMonthGeneralChange={setManualMonthGeneral} />}
 
       {activeTab === "qimen" && <QiMenPanel result={qiMen} dayPillar={calculation.fourPillars.day.value} hourPillar={calculation.fourPillars.hour.value} copied={copiedPanel === "qimen"} onCopy={() => copyPanelText("qimen", formatQiMenText(qiMen))} />}
-
-      {activeTab === "bazi" && <section className="detail-section luck-only">
-        <div className="detail-heading"><span className="step">运</span><div><h2>大运流年</h2><p>点击任一大运，展开该运十个流年</p></div></div>
-        <article className="luck-card"><header><div><span>{result.luck.direction}</span><small>约 {result.luck.startAge} 岁起运 · 据 {result.luck.basisTerm}</small></div><p>{result.luck.note}</p></header><div className="luck-timeline">{result.luck.cycles.map((cycle, index) => <button type="button" className={selectedLuck === index ? "selected" : ""} onClick={() => setSelectedLuck(selectedLuck === index ? null : index)} aria-expanded={selectedLuck === index} key={cycle.order}><small>{cycle.startYear}</small><strong>{cycle.pillar}</strong><span>{cycle.startAge} 岁</span><em>{cycle.naYin}</em><i>{selectedLuck === index ? "收起" : "看流年"}</i></button>)}</div>
-          {selectedCycle && <section className="annual-drawer"><header><div><strong>{selectedCycle.pillar}大运 · 十年流年</strong><span>{selectedCycle.startYear}—{selectedCycle.startYear + 9}</span></div><small>流年以当年立春为干支交接</small></header><div className="annual-grid">{annualYears.map((annual) => <div key={annual.year}><small>{annual.year}</small><strong>{annual.value}</strong><span>{annual.age} 岁</span><em>{annual.naYin}</em></div>)}</div></section>}
-        </article>
-      </section>}
 
       {activeTab === "bazi" && <section className="reverse-teaser" id="reverse">
         <span className="seal">反</span><div><small>已有八字，寻找出生时刻？</small><h2>八字反查 · 横跨千年寻时</h2><p>按年、月、日、时四柱筛选真实阳历时间，支持经度与换日口径复核。</p></div><button onClick={openReverse}>进入反查 <span>1000—2100</span></button>
