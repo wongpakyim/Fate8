@@ -49,8 +49,17 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(nodeModule, /日干强弱/);
   assert.match(nodeModule, /喜克、泄、耗/);
   assert.doesNotMatch(nodeModule, /十二长生|旺相休囚死|十神|六亲|神煞|element-/);
-  assert.match(html, /长生/);
+  assert.match(html, /日干长生/);
   assert.doesNotMatch(html, /十神·六亲|藏干·六亲|十二长生|阳木|阴木|阳火|阴火|阳土|阴土|阳金|阴金|阳水|阴水/);
+  assert.match(html, /day-master-growth/);
+  const luckMeta = html.match(/<button[^>]*class="luck-cycle-meta"[^>]*>(.*?)<\/button>/s);
+  assert.ok(luckMeta);
+  assert.match(luckMeta[1], /\d+–\d+岁/);
+  assert.doesNotMatch(luckMeta[1], /<small|<em|纳音/);
+  const annualMeta = html.match(/<button[^>]*class="annual-meta"[^>]*>(.*?)<\/button>/s);
+  assert.ok(annualMeta);
+  assert.match(annualMeta[1], /^<span>\d+岁<\/span>$/);
+  assert.doesNotMatch(annualMeta[1], /\d{4}|<small|<em/);
   assert.match(html, /神煞/);
   assert.doesNotMatch(html, /五行权重|节气定位|命盘详解/);
   assert.doesNotMatch(html, /CALCULATION NOTES|每一步，都说明怎么算|计算与展示，分层组合|开发者接入/);

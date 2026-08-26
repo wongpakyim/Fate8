@@ -113,7 +113,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
           const item = luckView[index];
           const selected = selectedLuck === index;
           return <article className={selected ? "selected" : ""} key={cycle.order}>
-            <button type="button" className="luck-cycle-meta" onClick={() => chooseCycle(index)} aria-pressed={selected}><small>{cycle.startYear}</small><span>{cycle.startAge}岁</span><em>{cycle.naYin}</em></button>
+            <button type="button" className="luck-cycle-meta" onClick={() => chooseCycle(index)} aria-pressed={selected}><span>{`${Math.floor(cycle.startAge)}–${Math.floor(cycle.startAge) + 9}岁`}</span></button>
             <div className="luck-ganzhi-body">
               <div className="ganzhi-stack">
                 <button type="button" className={focusReference.key === `luck-${index}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "stem" })} aria-label={`${cycle.pillar}大运天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
@@ -130,7 +130,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
           const item = annualView[index];
           const selected = selectedAnnualYear === annual.year;
           return <article className={selected ? "selected" : ""} key={annual.year}>
-            <button type="button" className="annual-meta" onClick={() => setSelectedAnnualYear(annual.year)}><small>{annual.year}</small><span>{annual.age}岁</span></button>
+            <button type="button" className="annual-meta" onClick={() => setSelectedAnnualYear(annual.year)}><span>{`${Math.floor(annual.age)}岁`}</span></button>
             <div className="annual-ganzhi-body">
               <div className="ganzhi-stack">
                 <button type="button" className={focusReference.key === `annual-${annual.year}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "stem" })} aria-label={`${annual.year}流年天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
@@ -144,7 +144,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
     </section>
 
     <div className="pillars" aria-label="四柱命盘">
-      <div className="pillar-labels"><span>十神</span><span>天干</span><span>地支·本气</span><span>藏干</span><span>纳音</span><span>长生</span><span>月令／坐宫</span><span>参照神煞</span></div>
+      <div className="pillar-labels"><span>十神</span><span>天干</span><span>地支·本气</span><span>藏干</span><span>纳音</span><span>日干长生</span><span>月令／坐宫</span><span>参照神煞</span></div>
       {natalView.pillars.map((pillar, index) => <div className={`pillar ${index === 2 ? "day-master" : ""}`} key={pillar.label}>
         <span className="pillar-title">{pillar.label}{index === 2 && <i>命主</i>}</span>
         <span className="god"><b>{pillar.stem.tenGod}</b></span>
@@ -152,7 +152,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
         <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${focusReference.key === `natal-${index}-branch` ? "selected" : ""}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "branch" })} aria-pressed={focusReference.key === `natal-${index}-branch`}><small>{pillar.branch.mainQi.name} · {pillar.branch.mainQi.tenGod}</small><b>{pillar.branch.name}</b></button>
         <span className="hidden">{pillar.branch.hiddenStems.map((hidden, hiddenIndex) => <button type="button" className={`hidden-focus ${focusReference.key === `hidden-${index}-${hiddenIndex}` ? "selected" : ""}`} key={hidden.name} onClick={() => chooseFocus({ scope: "hidden", pillarIndex: index, hiddenIndex })} aria-pressed={focusReference.key === `hidden-${index}-${hiddenIndex}`} aria-label={`${pillar.label}${pillar.branch.name}藏干${hidden.name}`}><b>{hidden.name}</b><i>{hidden.tenGod}</i></button>)}</span>
         <span className="nayin">{pillar.naYin}</span>
-        <span className="growth-stage">{pillar.growthStage}</span>
+        <span className="growth-stage day-master-growth">{natalPillars[index].growthStage}</span>
         <span className="pillar-strength"><b>月令{pillar.monthStatus}</b><small>坐宫{pillar.seatGrowth}</small></span>
         <span className="shensha">{pillar.shenSha.length ? pillar.shenSha.map((star) => <b key={star}>{star}</b>) : "—"}</span>
       </div>)}
