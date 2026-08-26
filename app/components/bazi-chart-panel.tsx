@@ -41,7 +41,18 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
     if (focus.scope === "hidden") {
       const pillar = natalPillars[focus.pillarIndex];
       const hidden = pillar.branch.hiddenStems[focus.hiddenIndex];
-      return { key: `hidden-${focus.pillarIndex}-${focus.hiddenIndex}`, kind: "stem", source: `${pillarLabels[focus.pillarIndex]}${pillar.branch.name}藏干${hidden.name}`, char: hidden.name, stemIndex: hidden.index, branchIndex: pillar.branch.index };
+      return {
+        key: `hidden-${focus.pillarIndex}-${focus.hiddenIndex}`,
+        kind: "stem",
+        source: `${pillarLabels[focus.pillarIndex]}${pillar.branch.name}藏干${hidden.name}`,
+        char: hidden.name,
+        stemIndex: hidden.index,
+        branchIndex: pillar.branch.index,
+        shenShaStemIndex: pillar.stem.index,
+        shenShaBranchIndex: pillar.branch.index,
+        shenShaPillarIndex: pillar.index,
+        shenShaSource: pillarLabels[focus.pillarIndex],
+      };
     }
 
     if (focus.scope === "natal") {
@@ -60,7 +71,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
     }
     const stemIndex = Number.isInteger(pillar.stem?.index) ? pillar.stem.index : pillar.index % 10;
     const branchIndex = Number.isInteger(pillar.branch?.index) ? pillar.branch.index : pillar.index % 12;
-    return { key, kind: focus.kind, source, char: focus.kind === "stem" ? pillar.stem.name : pillar.branch.name, stemIndex, branchIndex, targetIndex };
+    return { key, kind: focus.kind, source, char: focus.kind === "stem" ? pillar.stem.name : pillar.branch.name, stemIndex, branchIndex, shenShaStemIndex: stemIndex, shenShaBranchIndex: branchIndex, shenShaPillarIndex: pillar.index, shenShaSource: source.replace(/天干|地支$/, ""), targetIndex };
   }, [focus, natalPillars, result.luck.cycles]);
 
   const natalView = getBaziFocusView(result, focusReference);
@@ -102,7 +113,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
 
     <section className="bazi-focus-summary">
       <div><small>当前计算点</small><strong className={elementClass(natalView.reference.stem.element)}>{natalView.reference.char}</strong><span>{natalView.reference.source} · 以{natalView.reference.stem.name}{natalView.reference.stem.element}为中心</span></div>
-      <p><span>月令旺衰 <b>{natalView.reference.monthStatus}</b></span><span>月令长生 <b>{natalView.reference.monthGrowth}</b></span><span>坐宫旺衰 <b>{natalView.reference.seatGrowth}</b></span></p>
+      <p><span>神煞参照 <b>{natalView.reference.shenShaReference.stem.name}{natalView.reference.shenShaReference.branch.name}</b></span><span>月令旺衰 <b>{natalView.reference.monthStatus}</b></span><span>月令长生 <b>{natalView.reference.monthGrowth}</b></span><span>坐宫旺衰 <b>{natalView.reference.seatGrowth}</b></span></p>
       <button type="button" onClick={resetDayMaster}>恢复日干</button>
     </section>
 
@@ -154,7 +165,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
         <span className="nayin">{pillar.naYin}</span>
         <span className="growth-stage day-master-growth">{natalPillars[index].growthStage}</span>
         <span className="pillar-strength"><b>月令{pillar.monthStatus}</b><small>坐宫{pillar.seatGrowth}</small></span>
-        <span className="shensha">{pillar.shenSha.length ? pillar.shenSha.map((star) => <b key={star}>{star}</b>) : "—"}</span>
+        <div className="shensha shensha-groups">{pillar.shenShaGroups.map((group) => <p key={group.category}><small>{group.category}</small><span>{group.items.length ? group.items.join(" · ") : "—"}</span></p>)}</div>
       </div>)}
     </div>
 

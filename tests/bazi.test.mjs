@@ -127,6 +127,21 @@ test("recalculates BaZi relations from natal, luck, or annual stems and branch m
   assert.ok(monthFocus.reference.seatGrowth);
   assert.notDeepEqual(dayFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod), monthFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod));
   assert.ok(monthFocus.pillars.every((pillar) => pillar.growthStage && Array.isArray(pillar.shenSha)));
+  assert.ok(dayFocus.pillars.every((pillar) => pillar.shenShaGroups.map((group) => group.category).join("、") === "干煞、支煞、年煞、季煞、月煞、杂煞"));
+
+  const yearPillar = chart.fourPillars.year;
+  const yearBranchFocus = getBaziFocusView(chart, {
+    kind: "branch",
+    branchIndex: yearPillar.branch.index,
+    shenShaStemIndex: yearPillar.stem.index,
+    shenShaBranchIndex: yearPillar.branch.index,
+    shenShaPillarIndex: yearPillar.index,
+    source: "年柱地支",
+  });
+  assert.equal(yearBranchFocus.reference.stem.name, yearPillar.branch.hiddenStems[0].name);
+  assert.equal(yearBranchFocus.reference.shenShaReference.stem.name, yearPillar.stem.name);
+  assert.equal(yearBranchFocus.reference.shenShaReference.branch.name, yearPillar.branch.name);
+  assert.notDeepEqual(yearBranchFocus.pillars.map((pillar) => pillar.shenShaGroups), dayFocus.pillars.map((pillar) => pillar.shenShaGroups));
 
   const annual = getAnnualPillar(2026);
   const annualBranchRelations = getBaziRelationsByReference(chart, { kind: "branch", branchIndex: annual.branch.index, source: "2026流年地支" });

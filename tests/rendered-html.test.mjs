@@ -44,6 +44,9 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /恢复日干/);
   assert.match(html, /月令旺衰/);
   assert.match(html, /坐宫旺衰/);
+  assert.match(html, /神煞参照/);
+  assert.match(html, /干煞.*支煞.*年煞.*季煞.*月煞.*杂煞/s);
+  assert.match(html, /shensha-groups/);
   const nodeModule = html.slice(nodeIndex, html.indexOf("<footer>", nodeIndex));
   assert.equal((nodeModule.match(/path-start-group/g) || []).length, 8);
   assert.match(nodeModule, /日干强弱/);
