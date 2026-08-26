@@ -21,9 +21,9 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /2 × 4 正交网格/);
   assert.match(html, /路径藏干展开 · 强弱用神/);
   assert.match(html, /按起始节点排列的连续三节点组合/);
-  assert.match(html, /十神·六亲/);
+  assert.match(html, /十神/);
   assert.match(html, /地支·本气/);
-  assert.match(html, /藏干·六亲/);
+  assert.match(html, /藏干/);
   assert.match(html, /hidden-focus/);
   assert.doesNotMatch(html, /chart-relation-panel|动态信息 · 八字八格/);
   assert.match(html, /术数排盘模块/);
@@ -49,7 +49,8 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(nodeModule, /日干强弱/);
   assert.match(nodeModule, /喜克、泄、耗/);
   assert.doesNotMatch(nodeModule, /十二长生|旺相休囚死|十神|六亲|神煞|element-/);
-  assert.match(html, /十二长生/);
+  assert.match(html, /长生/);
+  assert.doesNotMatch(html, /十神·六亲|藏干·六亲|十二长生|阳木|阴木|阳火|阴火|阳土|阴土|阳金|阴金|阳水|阴水/);
   assert.match(html, /神煞/);
   assert.doesNotMatch(html, /五行权重|节气定位|命盘详解/);
   assert.doesNotMatch(html, /CALCULATION NOTES|每一步，都说明怎么算|计算与展示，分层组合|开发者接入/);
