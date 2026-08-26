@@ -221,3 +221,23 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .bazi-luck-panel .luck-cycle-meta { justify-content:center; min-height:28px; padding:6px 4px 3px; }.bazi-luck-panel .luck-cycle-meta span,.bazi-luck-panel .annual-meta span { color:#263a30; font-size:11px; font-weight:800; }.bazi-luck-panel .annual-meta { min-height:26px; }
 
 @media (max-width:560px) { .bazi-interactive-chart .shensha-groups { gap:3px; padding:5px 3px; }.bazi-interactive-chart .shensha-groups p { grid-template-columns:34px minmax(0,1fr); gap:3px; line-height:1.3; }.bazi-interactive-chart .shensha-groups small,.bazi-interactive-chart .shensha-groups span { font-size:11px; } }
+
+.path-combinations { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.path-start-group>header { padding:10px 12px; }
+.path-start-group>header strong { font-size:15px; }
+.path-start-group>header span { font-size:12px; }
+.path-start-group>div { gap:6px; padding:7px; }
+.path-combinations button { gap:8px; padding:9px 10px; font-size:14px; line-height:1.35; }
+.path-entry>.primary-path-button>span { white-space:normal; }
+.path-entry>.primary-path-button small { font-size:12px; }
+.path-useful-tags { gap:5px!important; padding:0 10px 9px!important; }
+.path-useful-tags>span,.path-useful-tags>button { padding:5px 7px; font-size:12px; }
+.path-useful-tags>span b,.path-useful-tags>button b { font-size:11px; }
+.secondary-paths>header { padding:8px 9px; }
+.secondary-paths>header strong { font-size:14px; }
+.secondary-paths>header span { font-size:12px; }
+.secondary-paths>div { max-height:300px; gap:5px; padding:7px!important; }
+.secondary-paths button { padding:8px 9px!important; }
+.secondary-paths button strong { font-size:16px; }
+.secondary-paths button span { font-size:12px; line-height:1.35; }
+@media (max-width:560px) { .path-combinations { grid-template-columns:1fr; max-height:360px; }.path-combinations button { font-size:12px; }.path-entry>.primary-path-button small,.path-useful-tags>span,.path-useful-tags>button,.secondary-paths button span { font-size:10px; }.secondary-paths button strong { font-size:14px; } }

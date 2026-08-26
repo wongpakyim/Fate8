@@ -122,6 +122,7 @@ test("recalculates BaZi relations from natal, luck, or annual stems and branch m
   const monthFocus = getBaziFocusView(chart, { kind: "stem", stemIndex: chart.fourPillars.month.stem.index, branchIndex: chart.fourPillars.month.branch.index, source: "月干" });
   assert.equal(dayFocus.reference.source, "日干");
   assert.equal(monthFocus.reference.source, "月干");
+  assert.equal(getBaziFocusView(chart, { kind: "stem", stemIndex: chart.fourPillars.year.stem.index, source: "年干" }).reference.monthStatus, "休");
   assert.match(monthFocus.reference.monthStatus, /^(旺|相|休|囚|死)$/);
   assert.ok(monthFocus.reference.monthGrowth);
   assert.ok(monthFocus.reference.seatGrowth);
@@ -143,11 +144,28 @@ test("recalculates BaZi relations from natal, luck, or annual stems and branch m
   assert.equal(yearBranchFocus.reference.shenShaReference.branch.name, yearPillar.branch.name);
   assert.notDeepEqual(yearBranchFocus.pillars.map((pillar) => pillar.shenShaGroups), dayFocus.pillars.map((pillar) => pillar.shenShaGroups));
 
+  const dayBranchFocus = getBaziFocusView(chart, { kind: "branch", branchIndex: chart.fourPillars.day.branch.index, source: "日支" });
+  assert.equal(dayBranchFocus.reference.stem.name, "甲");
+  assert.equal(dayBranchFocus.reference.monthStatus, "旺");
+  const hiddenStemFocus = getBaziFocusView(chart, { kind: "stem", stemIndex: 2, source: "寅藏干丙" });
+  assert.equal(hiddenStemFocus.reference.stem.name, "丙");
+  assert.equal(hiddenStemFocus.reference.monthStatus, "相");
+
   const annual = getAnnualPillar(2026);
   const annualBranchRelations = getBaziRelationsByReference(chart, { kind: "branch", branchIndex: annual.branch.index, source: "2026流年地支" });
   assert.equal(annual.value, "丙午");
   assert.equal(annualBranchRelations.reference.name, "丁");
   assert.match(annualBranchRelations.reference.source, /流年地支/);
+});
+
+test("uses the four-season earth state for Chen, Wei, Xu, and Chou months", () => {
+  const chart = buildBaziChart(calculateFourPillars({ solarTime: "1992-04-15 14:30", longitude: 113.27 }));
+  assert.equal(chart.calculation.calendarContext.monthOrder, 2);
+  const expected = new Map([[0, "囚"], [2, "休"], [4, "旺"], [6, "相"], [8, "死"]]);
+  for (const [stemIndex, monthStatus] of expected) {
+    const focus = getBaziFocusView(chart, { kind: "stem", stemIndex, source: "测试天干" });
+    assert.equal(focus.reference.monthStatus, monthStatus);
+  }
 });
 
 test("defaults luck years to the current year or the nearest same-Ganzhi year for old charts", () => {
