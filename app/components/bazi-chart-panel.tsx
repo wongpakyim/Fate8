@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { getAnnualPillar } from "@/lib/four-pillars.mjs";
 import { buildBaziChart, formatBaziText, getBaziFocusView, getDefaultLuckSelection } from "@/lib/chart-presentation.mjs";
+import { ChartTimeControls } from "./chart-time-controls";
 import { elementClass } from "./five-elements";
 
 type BaziResult = ReturnType<typeof buildBaziChart>;
@@ -15,11 +16,13 @@ type FocusSelection =
 
 const pillarLabels = ["年柱", "月柱", "日柱", "时柱"];
 
-export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
+export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousTime, onNextTime }: {
   result: BaziResult;
   copied: boolean;
   onCopy: (text: string) => void;
   onDownload: () => void;
+  onPreviousTime: () => void;
+  onNextTime: () => void;
 }) {
   const currentYear = new Date().getFullYear();
   const defaultLuck = useMemo(() => getDefaultLuckSelection(result, currentYear), [result, currentYear]);
@@ -101,7 +104,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload }: {
   return <article className="chart-card bazi-interactive-chart" aria-live="polite">
     <div className="chart-head">
       <div><span className="step">02</span><h2>四柱命盘</h2><span className="chart-code">{result.fourPillars.compact}</span></div>
-      <div className="chart-actions"><button type="button" onClick={() => onCopy(formatBaziText(result))}>{copied ? "盘面信息已复制" : "复制文字简排"}</button><button type="button" onClick={onDownload}>下载</button></div>
+      <div className="chart-actions"><ChartTimeControls onPrevious={onPreviousTime} onNext={onNextTime} /><button type="button" onClick={() => onCopy(formatBaziText(result))}>{copied ? "盘面信息已复制" : "复制文字简排"}</button><button type="button" onClick={onDownload}>下载</button></div>
     </div>
     <div className="profile-strip">
       <div><small>命造</small><strong>{result.input.sex === "female" ? "坤造" : "乾造"}</strong></div>

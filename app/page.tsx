@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import divisionSource from "@/data/china-divisions.json";
-import { formatBirthCode, parseBirthCode } from "@/lib/birth-code.mjs";
+import { formatBirthCode, formatCurrentDateTime, parseBirthCode, shiftSolarDateTime } from "@/lib/birth-code.mjs";
 import { calculateFourPillars, REVERSE_SEARCH_BASIS, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
 import { formatBaziText, getBaziNodeStates } from "@/lib/chart-presentation.mjs";
 import { buildReadingSession } from "@/lib/reading-session.mjs";
@@ -42,15 +42,16 @@ function districtsFor(city?: Division): Division[] {
   return city?.children?.length ? city.children : city ? [city] : [];
 }
 
-function initialCalculation() {
-  return calculateFourPillars({ solarTime: "1992-03-15 14:30", sex: "male", location: "广东省 广州市 越秀区", longitude: 113.267, latitude: 23.129, timezoneOffset: 8 }, { dayBoundary: 23, solarTimeMode: "apparent" });
+function initialCalculation(solarTime: string) {
+  return calculateFourPillars({ solarTime: solarTime.replace("T", " "), sex: "male", location: "广东省 广州市 越秀区", longitude: 113.267, latitude: 23.129, timezoneOffset: 8 }, { dayBoundary: 23, solarTimeMode: "apparent" });
 }
 
 export default function Home() {
+  const [initialDateTime] = useState(() => formatCurrentDateTime(8));
   const [activeTab, setActiveTab] = useState<ModuleTab>("bazi");
   const [inputMode, setInputMode] = useState<"picker" | "text">("picker");
-  const [dateTime, setDateTime] = useState("1992-03-15T14:30");
-  const [textTime, setTextTime] = useState("1199203151430");
+  const [dateTime, setDateTime] = useState(initialDateTime);
+  const [textTime, setTextTime] = useState(() => formatBirthCode(initialDateTime, "male"));
   const [sex, setSex] = useState("male");
   const [provinceCode, setProvinceCode] = useState(defaultProvinceCode);
   const [cityCode, setCityCode] = useState(defaultCityCode);
@@ -62,7 +63,7 @@ export default function Home() {
   const [dayBoundary, setDayBoundary] = useState<23 | 24>(23);
   const [solarTimeMode, setSolarTimeMode] = useState<"apparent" | "mean" | "none">("apparent");
   const [inputCollapsed, setInputCollapsed] = useState(false);
-  const [calculation, setCalculation] = useState<FourPillarsCalculation>(initialCalculation);
+  const [calculation, setCalculation] = useState<FourPillarsCalculation>(() => initialCalculation(initialDateTime));
   const [monthGeneralMode, setMonthGeneralMode] = useState<"auto" | "manual">("auto");
   const [manualMonthGeneral, setManualMonthGeneral] = useState("子");
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
@@ -121,11 +122,25 @@ export default function Home() {
   }
 
   function useCurrentTime() {
-    const now = new Date();
-    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+    const local = formatCurrentDateTime(Number(timezone));
     setDateTime(local);
     setTextTime(formatBirthCode(local, sex));
     setInputMode("picker");
+  }
+
+  function shiftChartTime(hours: -2 | 2) {
+    try {
+      const shifted = shiftSolarDateTime(dateTime, hours);
+      const nextCalculation = makeCalculation(shifted.replace("T", " "));
+      setDateTime(shifted);
+      setTextTime(formatBirthCode(shifted, sex));
+      setInputMode("picker");
+      setCalculation(nextCalculation);
+      setSelectedPath(null);
+      setError("");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "切换时辰失败");
+    }
   }
 
   async function copyPanelText(panel: "bazi" | "liuren" | "qimen", text: string) {
@@ -240,12 +255,12 @@ export default function Home() {
           <p className="privacy">仅在当前浏览器内计算，不上传或保存出生信息</p>
         </form>}
 
-        <BaziChartPanel key={`${result.time.standard}-${result.fourPillars.compact}`} result={result} copied={copiedPanel === "bazi"} onCopy={(text) => copyPanelText("bazi", text)} onDownload={downloadResult} />
+        <BaziChartPanel key={`${result.time.standard}-${result.fourPillars.compact}`} result={result} copied={copiedPanel === "bazi"} onCopy={(text) => copyPanelText("bazi", text)} onDownload={downloadResult} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} />
       </section>}
 
-      {activeTab === "liuren" && <LiuRenPanel result={liuRen} mode={monthGeneralMode} manualMonthGeneral={manualMonthGeneral} copied={copiedPanel === "liuren"} onCopy={() => copyPanelText("liuren", formatLiuRenText(liuRen))} onModeChange={setMonthGeneralMode} onMonthGeneralChange={setManualMonthGeneral} />}
+      {activeTab === "liuren" && <LiuRenPanel result={liuRen} mode={monthGeneralMode} manualMonthGeneral={manualMonthGeneral} copied={copiedPanel === "liuren"} onCopy={() => copyPanelText("liuren", formatLiuRenText(liuRen))} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} onModeChange={setMonthGeneralMode} onMonthGeneralChange={setManualMonthGeneral} />}
 
-      {activeTab === "qimen" && <QiMenPanel result={qiMen} dayPillar={calculation.fourPillars.day.value} hourPillar={calculation.fourPillars.hour.value} copied={copiedPanel === "qimen"} onCopy={() => copyPanelText("qimen", formatQiMenText(qiMen))} />}
+      {activeTab === "qimen" && <QiMenPanel result={qiMen} dayPillar={calculation.fourPillars.day.value} hourPillar={calculation.fourPillars.hour.value} copied={copiedPanel === "qimen"} onCopy={() => copyPanelText("qimen", formatQiMenText(qiMen))} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} />}
 
       {activeTab === "bazi" && <section className="reverse-teaser" id="reverse">
         <span className="seal">反</span><div><small>已有八字，寻找出生时刻？</small><h2>八字反查 · 横跨千年寻时</h2><p>按年、月、日、时四柱筛选真实阳历时间，支持经度与换日口径复核。</p></div><button onClick={openReverse}>进入反查 <span>1000—2100</span></button>

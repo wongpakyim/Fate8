@@ -32,6 +32,8 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /奇门/);
   assert.match(html, /挂起/);
   assert.match(html, /现在/);
+  assert.match(html, /上一个时辰/);
+  assert.match(html, /下一个时辰/);
   assert.match(html, /复制文字简排/);
   assert.match(html, /女 · 坤造 · 0/);
   assert.match(html, /男 · 乾造 · 1/);

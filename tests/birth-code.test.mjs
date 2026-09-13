@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { formatBirthCode, parseBirthCode } from "../lib/birth-code.mjs";
+import { formatBirthCode, formatCurrentDateTime, parseBirthCode, shiftSolarDateTime } from "../lib/birth-code.mjs";
 
 test("parses gender-prefixed compact birth input and defaults seconds to zero", () => {
   const parsed = parseBirthCode("0201903010856");
@@ -25,4 +25,13 @@ test("rejects malformed, impossible, and out-of-range birth codes", () => {
   assert.throws(() => parseBirthCode("201903010856"), /0 或 1/);
   assert.throws(() => parseBirthCode("0201902300856"), /阳历日期不存在/);
   assert.throws(() => parseBirthCode("0099901010000"), /1000–2100/);
+});
+
+test("formats current time in the configured fixed timezone", () => {
+  assert.equal(formatCurrentDateTime(8, new Date("2026-09-13T01:02:03Z")), "2026-09-13T09:02");
+});
+
+test("moves chart time by one double-hour across calendar boundaries", () => {
+  assert.equal(shiftSolarDateTime("2026-12-31T23:30", 2), "2027-01-01T01:30");
+  assert.equal(shiftSolarDateTime("2026-01-01T00:30", -2), "2025-12-31T22:30");
 });

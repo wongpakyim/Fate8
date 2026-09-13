@@ -241,3 +241,43 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .secondary-paths button strong { font-size:16px; }
 .secondary-paths button span { font-size:12px; line-height:1.35; }
 @media (max-width:560px) { .path-combinations { grid-template-columns:1fr; max-height:360px; }.path-combinations button { font-size:12px; }.path-entry>.primary-path-button small,.path-useful-tags>span,.path-useful-tags>button,.secondary-paths button span { font-size:10px; }.secondary-paths button strong { font-size:14px; } }
+.chart-head { flex-wrap:wrap; }
+.chart-actions { align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+.chart-time-controls { display:flex; align-items:center; gap:6px; }
+.chart-time-controls button { padding:9px 12px; border:1px solid #71897d; color:#244237; background:#f3f6ef; font-size:11px; font-weight:800; white-space:nowrap; }
+.chart-time-controls button:hover,.chart-time-controls button:focus-visible { color:#f6f7f1; background:#29463a; outline:none; }
+.liuren-heading>.chart-time-controls { margin-left:auto; }
+.liuren-heading>.panel-copy-button { margin-left:0; }
+.classic-liuren-summary { border-bottom:0; }
+.classic-transmissions { border-bottom:0; }
+
+@media (min-width:561px) {
+  .qimen-classic-card { width:min(640px,100%); padding:16px; }
+  .qimen-reference-summary,.qimen-nine-grid { width:min(595px,100%); }
+  .qimen-palace { min-height:161px; padding:8px 8px 7px; }
+  .qimen-palace-body { height:auto; min-height:133px; grid-template-rows:1fr 1fr auto; gap:2px; padding-top:5px; }
+  .qimen-pair-row section { padding:2px; }
+  .qimen-pair-row small,.qimen-door-value small { font-size:9px; }
+  .qimen-deity-value strong,.qimen-star-value strong { font-size:18px; }
+  .qimen-heaven-stem-value strong,.qimen-earth-stem-value strong { font-size:25px; }
+  .qimen-heaven-stem-value span,.qimen-earth-stem-value span { font-size:10px; }
+  .qimen-door-value { min-height:28px; gap:5px; }
+  .qimen-door-value strong { font-size:19px; }
+  .qimen-center-content strong { margin:5px 0; font-size:34px; }
+}
+
+@media (max-width:560px) {
+  .chart-time-controls { width:100%; }
+  .chart-time-controls button { flex:1; padding:8px 6px; font-size:9px; }
+  .qimen-heading-actions .chart-time-controls { width:100%; }
+  .qimen-palace { min-height:204px; padding:6px 5px; }
+  .qimen-palace-body { height:145px; min-height:145px; grid-template-rows:1fr 1fr auto; gap:2px; padding-top:4px; }
+  .qimen-pair-row section { padding:2px 1px; }
+  .qimen-pair-row small,.qimen-door-value small { font-size:7px; }
+  .qimen-deity-value strong,.qimen-star-value strong { font-size:14px; }
+  .qimen-heaven-stem-value strong,.qimen-earth-stem-value strong { font-size:21px; }
+  .qimen-heaven-stem-value span,.qimen-earth-stem-value span { font-size:8px; }
+  .qimen-door-value { min-height:27px; gap:4px; }
+  .qimen-door-value strong { font-size:16px; }
+}
+

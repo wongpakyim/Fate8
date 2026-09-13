@@ -1,4 +1,5 @@
 import { calculateQiMen } from "@/lib/qi-men.mjs";
+import { ChartTimeControls } from "./chart-time-controls";
 import { elementClass } from "./five-elements";
 
 type QiMenResult = ReturnType<typeof calculateQiMen>;
@@ -12,13 +13,13 @@ function growthLabel(items: Array<{ stem: string; stage: string }>) {
   return values.join(" / ") || "—";
 }
 
-export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy }: { result: QiMenResult; dayPillar: string; hourPillar: string; copied: boolean; onCopy: () => void }) {
+export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy, onPreviousTime, onNextTime }: { result: QiMenResult; dayPillar: string; hourPillar: string; copied: boolean; onCopy: () => void; onPreviousTime: () => void; onNextTime: () => void }) {
   const pillars = result.source.fourPillars.split(" ");
   return <section className="qimen-section module-page" id="qimen">
     <div className="detail-heading qimen-heading">
       <span className="step">奇</span>
       <div><h2>时家奇门 · 拆补法</h2><p>复用同一标准时、真太阳时、日柱与时柱 · 九宫转盘起局</p></div>
-      <div className="qimen-heading-actions"><button type="button" className="panel-copy-button" onClick={onCopy}>{copied ? "盘面信息已复制" : "复制文字简排"}</button><span className="qimen-method-chip">拆补法 · {result.ju.label}</span></div>
+      <div className="qimen-heading-actions"><ChartTimeControls onPrevious={onPreviousTime} onNext={onNextTime} /><button type="button" className="panel-copy-button" onClick={onCopy}>{copied ? "盘面信息已复制" : "复制文字简排"}</button><span className="qimen-method-chip">拆补法 · {result.ju.label}</span></div>
     </div>
     <article className="qimen-card qimen-classic-card">
       <header className="qimen-reference-summary">

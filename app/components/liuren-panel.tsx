@@ -1,4 +1,5 @@
 import { calculateLiuRen, MONTH_GENERALS } from "@/lib/liu-ren.mjs";
+import { ChartTimeControls } from "./chart-time-controls";
 import { elementClass } from "./five-elements";
 
 type LiuRenResult = ReturnType<typeof calculateLiuRen>;
@@ -6,12 +7,14 @@ type LiuRenResult = ReturnType<typeof calculateLiuRen>;
 const platePositions = [[4, 3], [4, 2], [4, 1], [3, 1], [2, 1], [1, 1], [1, 2], [1, 3], [1, 4], [2, 4], [3, 4], [4, 4]] as const;
 const pillarLabels = ["年", "月", "日", "时"];
 
-export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, onModeChange, onMonthGeneralChange }: {
+export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, onPreviousTime, onNextTime, onModeChange, onMonthGeneralChange }: {
   result: LiuRenResult;
   mode: "auto" | "manual";
   manualMonthGeneral: string;
   copied: boolean;
   onCopy: () => void;
+  onPreviousTime: () => void;
+  onNextTime: () => void;
   onModeChange: (mode: "auto" | "manual") => void;
   onMonthGeneralChange: (monthGeneral: string) => void;
 }) {
@@ -22,6 +25,7 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
     <div className="detail-heading liuren-heading">
       <span className="step">壬</span>
       <div><h2>大六壬排盘</h2><p>直接调用同一次四柱计算 · 月将加占时 · 天地盘、四课与三传</p></div>
+      <ChartTimeControls onPrevious={onPreviousTime} onNext={onNextTime} />
       <button type="button" className="panel-copy-button" onClick={onCopy}>{copied ? "盘面信息已复制" : "复制文字简排"}</button>
       <div className="month-general-control" aria-label="月将设置">
         <button type="button" className={mode === "auto" ? "selected" : ""} onClick={() => onModeChange("auto")}>中气自动换将</button>
@@ -60,7 +64,6 @@ export function LiuRenPanel({ result, mode, manualMonthGeneral, copied, onCopy, 
             <p><small>月将</small><strong><b className={elementClass(result.monthGeneral.element)}>{result.monthGeneral.branch}</b>{result.monthGeneral.name}</strong><small>占时</small><strong className={elementClass(result.divinationTime.branch.element)}>{result.divinationTime.branch.name}</strong><small>旬遁</small><strong>{result.xunDun.start}</strong></p>
           </div>
           <div className="classic-transmissions">
-            <small>三传 · 六亲／遁干／支神／天将</small>
             {result.threeTransmissions.items.map((item) => <p key={item.label}><span>{item.sixRelation}</span><i className={item.dunStem ? elementClass(item.dunStem.element) : "dun-stem-empty"}>{item.dunStem?.name || "空"}</i><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong><b className={elementClass(item.heavenlyGeneralDetail.element)}>{item.heavenlyGeneral}</b></p>)}
           </div>
           <div className="classic-lessons">
