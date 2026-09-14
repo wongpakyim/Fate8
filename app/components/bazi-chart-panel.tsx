@@ -135,7 +135,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
               </div>
               <div className="ganzhi-relations">
                 <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
-                <span className="branch-six-kin"><b>{item.branch.mainQi.sixKin.split("·")[0]}</b></span>
+                <span className="branch-ten-god"><b>{item.branch.mainQi.tenGod}</b></span>
                 <span className="branch-growth"><b>{item.growthStage}</b></span>
               </div>
             </div>
@@ -156,7 +156,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
               </div>
               <div className="ganzhi-relations">
                 <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
-                <span className="branch-six-kin"><b>{item.branch.mainQi.sixKin.split("·")[0]}</b></span>
+                <span className="branch-ten-god"><b>{item.branch.mainQi.tenGod}</b></span>
                 <span className="branch-growth"><b>{item.growthStage}</b></span>
               </div>
             </div>

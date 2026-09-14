@@ -65,7 +65,7 @@ test("server-renders the finished product page and metadata", async () => {
   assert.ok(annualMeta);
   assert.match(annualMeta[1], /^<strong>\d{4}<\/strong><span>\d+岁<\/span>$/);
   assert.doesNotMatch(annualMeta[1], /<small|<em/);
-  assert.match(html, /class="branch-six-kin"/);
+  assert.match(html, /class="branch-ten-god"/);
   assert.match(html, /class="branch-growth"/);
   assert.match(html, /神煞/);
   assert.doesNotMatch(html, /五行权重|节气定位|命盘详解/);
