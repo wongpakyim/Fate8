@@ -133,7 +133,11 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
                 <button type="button" className={focusReference.key === `luck-${index}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "stem" })} aria-label={`${cycle.pillar}大运天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
                 <button type="button" className={focusReference.key === `luck-${index}-branch` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "branch" })} aria-label={`${cycle.pillar}大运地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
               </div>
-              <div className="ganzhi-relations"><span><b>{item.stem.tenGod}</b></span><span><b>{item.growthStage}</b></span></div>
+              <div className="ganzhi-relations">
+                <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
+                <span className="branch-six-kin"><b>{item.branch.mainQi.sixKin.split("·")[0]}</b></span>
+                <span className="branch-growth"><b>{item.growthStage}</b></span>
+              </div>
             </div>
           </article>;
         })}
@@ -144,13 +148,17 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
           const item = annualView[index];
           const selected = selectedAnnualYear === annual.year;
           return <article className={selected ? "selected" : ""} key={annual.year}>
-            <button type="button" className="annual-meta" onClick={() => setSelectedAnnualYear(annual.year)}><span>{`${Math.floor(annual.age)}岁`}</span></button>
+            <button type="button" className="annual-meta" onClick={() => setSelectedAnnualYear(annual.year)}><strong>{annual.year}</strong><span>{`${Math.floor(annual.age)}岁`}</span></button>
             <div className="annual-ganzhi-body">
               <div className="ganzhi-stack">
                 <button type="button" className={focusReference.key === `annual-${annual.year}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "stem" })} aria-label={`${annual.year}流年天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
                 <button type="button" className={focusReference.key === `annual-${annual.year}-branch` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "branch" })} aria-label={`${annual.year}流年地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
               </div>
-              <div className="ganzhi-relations"><span><b>{item.stem.tenGod}</b></span><span><b>{item.growthStage}</b></span></div>
+              <div className="ganzhi-relations">
+                <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
+                <span className="branch-six-kin"><b>{item.branch.mainQi.sixKin.split("·")[0]}</b></span>
+                <span className="branch-growth"><b>{item.growthStage}</b></span>
+              </div>
             </div>
           </article>;
         })}</div>

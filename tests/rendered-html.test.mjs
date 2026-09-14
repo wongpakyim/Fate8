@@ -63,8 +63,10 @@ test("server-renders the finished product page and metadata", async () => {
   assert.doesNotMatch(luckMeta[1], /<small|<em|纳音/);
   const annualMeta = html.match(/<button[^>]*class="annual-meta"[^>]*>(.*?)<\/button>/s);
   assert.ok(annualMeta);
-  assert.match(annualMeta[1], /^<span>\d+岁<\/span>$/);
-  assert.doesNotMatch(annualMeta[1], /\d{4}|<small|<em/);
+  assert.match(annualMeta[1], /^<strong>\d{4}<\/strong><span>\d+岁<\/span>$/);
+  assert.doesNotMatch(annualMeta[1], /<small|<em/);
+  assert.match(html, /class="branch-six-kin"/);
+  assert.match(html, /class="branch-growth"/);
   assert.match(html, /神煞/);
   assert.doesNotMatch(html, /五行权重|节气定位|命盘详解/);
   assert.doesNotMatch(html, /CALCULATION NOTES|每一步，都说明怎么算|计算与展示，分层组合|开发者接入/);

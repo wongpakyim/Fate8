@@ -127,6 +127,7 @@ test("recalculates BaZi relations from natal, luck, or annual stems and branch m
   assert.ok(monthFocus.reference.monthGrowth);
   assert.ok(monthFocus.reference.seatGrowth);
   assert.notDeepEqual(dayFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod), monthFocus.pillars[0].branch.hiddenStems.map((hidden) => hidden.tenGod));
+  assert.notEqual(dayFocus.pillars[0].branch.mainQi.sixKin, monthFocus.pillars[0].branch.mainQi.sixKin);
   assert.ok(monthFocus.pillars.every((pillar) => pillar.growthStage && Array.isArray(pillar.shenSha)));
   assert.ok(dayFocus.pillars.every((pillar) => pillar.shenShaGroups.map((group) => group.category).join("、") === "干煞、支煞、年煞、季煞、月煞、杂煞"));
 
