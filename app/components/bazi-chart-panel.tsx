@@ -101,6 +101,14 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
     setFocus({ scope: "natal", pillarIndex: 2, kind: "stem" });
   }
 
+  function correspondenceClassForStem(stemIndex: number) {
+    return focus.scope === "hidden" && stemIndex === focusReference.stemIndex ? " correspondence-match" : "";
+  }
+
+  function correspondenceClassForBranch(hiddenStems: Array<{ index: number }>) {
+    return focus.scope !== "hidden" && focus.kind === "stem" && hiddenStems.some((hidden) => hidden.index === focusReference.stemIndex) ? " correspondence-match" : "";
+  }
+
   return <article className="chart-card bazi-interactive-chart" aria-live="polite">
     <div className="chart-head">
       <div><span className="step">02</span><h2>四柱命盘</h2><span className="chart-code">{result.fourPillars.compact}</span></div>
@@ -130,8 +138,8 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
             <button type="button" className="luck-cycle-meta" onClick={() => chooseCycle(index)} aria-pressed={selected}><span>{`${Math.floor(cycle.startAge)}–${Math.floor(cycle.startAge) + 9}岁`}</span></button>
             <div className="luck-ganzhi-body">
               <div className="ganzhi-stack">
-                <button type="button" className={focusReference.key === `luck-${index}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "stem" })} aria-label={`${cycle.pillar}大运天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
-                <button type="button" className={focusReference.key === `luck-${index}-branch` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "branch" })} aria-label={`${cycle.pillar}大运地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
+                <button type="button" className={`${focusReference.key === `luck-${index}-stem` ? "focus-selected" : ""}${correspondenceClassForStem(item.stem.index)}`} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "stem" })} aria-label={`${cycle.pillar}大运天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
+                <button type="button" className={`${focusReference.key === `luck-${index}-branch` ? "focus-selected" : ""}${correspondenceClassForBranch(item.branch.hiddenStems)}`} onClick={() => chooseFocus({ scope: "luck", cycleIndex: index, kind: "branch" })} aria-label={`${cycle.pillar}大运地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
               </div>
               <div className="ganzhi-relations">
                 <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
@@ -151,8 +159,8 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
             <button type="button" className="annual-meta" onClick={() => setSelectedAnnualYear(annual.year)}><strong>{annual.year}</strong><span>{`${Math.floor(annual.age)}岁`}</span></button>
             <div className="annual-ganzhi-body">
               <div className="ganzhi-stack">
-                <button type="button" className={focusReference.key === `annual-${annual.year}-stem` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "stem" })} aria-label={`${annual.year}流年天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
-                <button type="button" className={focusReference.key === `annual-${annual.year}-branch` ? "focus-selected" : ""} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "branch" })} aria-label={`${annual.year}流年地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
+                <button type="button" className={`${focusReference.key === `annual-${annual.year}-stem` ? "focus-selected" : ""}${correspondenceClassForStem(item.stem.index)}`} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "stem" })} aria-label={`${annual.year}流年天干${item.stem.name}`}><strong className={elementClass(item.stem.element)}>{item.stem.name}</strong></button>
+                <button type="button" className={`${focusReference.key === `annual-${annual.year}-branch` ? "focus-selected" : ""}${correspondenceClassForBranch(item.branch.hiddenStems)}`} onClick={() => chooseFocus({ scope: "annual", cycleIndex: selectedLuck, year: annual.year, kind: "branch" })} aria-label={`${annual.year}流年地支${item.branch.name}`}><strong className={elementClass(item.branch.element)}>{item.branch.name}</strong></button>
               </div>
               <div className="ganzhi-relations">
                 <span className="stem-ten-god"><b>{item.stem.tenGod}</b></span>
@@ -170,8 +178,8 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
       {natalView.pillars.map((pillar, index) => <div className={`pillar ${index === 2 ? "day-master" : ""}`} key={pillar.label}>
         <span className="pillar-title">{pillar.label}{index === 2 && <i>命主</i>}</span>
         <span className="god"><b>{pillar.stem.tenGod}</b></span>
-        <button type="button" className={`stem chart-character ${elementClass(pillar.stem.element)} ${focusReference.key === `natal-${index}-stem` ? "selected" : ""}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "stem" })} aria-pressed={focusReference.key === `natal-${index}-stem`}><b>{pillar.stem.name}</b></button>
-        <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${focusReference.key === `natal-${index}-branch` ? "selected" : ""}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "branch" })} aria-pressed={focusReference.key === `natal-${index}-branch`}><small>{pillar.branch.mainQi.name} · {pillar.branch.mainQi.tenGod}</small><b>{pillar.branch.name}</b></button>
+        <button type="button" className={`stem chart-character ${elementClass(pillar.stem.element)} ${focusReference.key === `natal-${index}-stem` ? "selected" : ""}${correspondenceClassForStem(pillar.stem.index)}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "stem" })} aria-pressed={focusReference.key === `natal-${index}-stem`}><b>{pillar.stem.name}</b></button>
+        <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${focusReference.key === `natal-${index}-branch` ? "selected" : ""}${correspondenceClassForBranch(pillar.branch.hiddenStems)}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "branch" })} aria-pressed={focusReference.key === `natal-${index}-branch`}><small>{pillar.branch.mainQi.name} · {pillar.branch.mainQi.tenGod}</small><b>{pillar.branch.name}</b></button>
         <span className="hidden">{pillar.branch.hiddenStems.map((hidden, hiddenIndex) => <button type="button" className={`hidden-focus ${focusReference.key === `hidden-${index}-${hiddenIndex}` ? "selected" : ""}`} key={hidden.name} onClick={() => chooseFocus({ scope: "hidden", pillarIndex: index, hiddenIndex })} aria-pressed={focusReference.key === `hidden-${index}-${hiddenIndex}`} aria-label={`${pillar.label}${pillar.branch.name}藏干${hidden.name}`}><b>{hidden.name}</b><i>{hidden.tenGod}</i></button>)}</span>
         <span className="nayin">{pillar.naYin}</span>
         <span className="growth-stage day-master-growth">{natalPillars[index].growthStage}</span>

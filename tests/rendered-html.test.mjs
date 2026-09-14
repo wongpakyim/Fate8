@@ -67,6 +67,7 @@ test("server-renders the finished product page and metadata", async () => {
   assert.doesNotMatch(annualMeta[1], /<small|<em/);
   assert.match(html, /class="branch-ten-god"/);
   assert.match(html, /class="branch-growth"/);
+  assert.match(html, /class="[^"]*correspondence-match/);
   assert.match(html, /神煞/);
   assert.doesNotMatch(html, /五行权重|节气定位|命盘详解/);
   assert.doesNotMatch(html, /CALCULATION NOTES|每一步，都说明怎么算|计算与展示，分层组合|开发者接入/);

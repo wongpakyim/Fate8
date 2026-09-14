@@ -222,6 +222,7 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .bazi-luck-panel .luck-timeline article>.luck-ganzhi-body .ganzhi-relations,.bazi-luck-panel .annual-grid article>.annual-ganzhi-body .ganzhi-relations { display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-rows:1fr 1fr; align-items:center; gap:1px 4px; }
 .bazi-luck-panel .ganzhi-relations .stem-ten-god { grid-column:1/-1; }.bazi-luck-panel .ganzhi-relations .branch-ten-god { grid-column:1; }.bazi-luck-panel .ganzhi-relations .branch-growth { grid-column:2; }
 .bazi-luck-panel .annual-meta strong { color:#17382c; font-size:11px; font-weight:900; }
+.bazi-interactive-chart button.correspondence-match { border-radius:5px; background:#fff0eb!important; box-shadow:inset 0 0 0 3px #c8322b!important; }
 
 @media (max-width:560px) { .bazi-interactive-chart .shensha-groups { gap:3px; padding:5px 3px; }.bazi-interactive-chart .shensha-groups p { grid-template-columns:34px minmax(0,1fr); gap:3px; line-height:1.3; }.bazi-interactive-chart .shensha-groups small,.bazi-interactive-chart .shensha-groups span { font-size:11px; } }
 
