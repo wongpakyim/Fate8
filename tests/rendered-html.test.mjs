@@ -25,6 +25,12 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /地支·本气/);
   assert.match(html, /藏干/);
   assert.match(html, /hidden-focus/);
+  assert.match(html, /branch-relation-tooltip/);
+  assert.match(html, /结合整合/);
+  assert.match(html, /破坏\/不完整/);
+  assert.match(html, /折磨痛苦/);
+  assert.match(html, /冲击远离/);
+  assert.match(html, /妨碍不得其心/);
   assert.doesNotMatch(html, /chart-relation-panel|动态信息 · 八字八格/);
   assert.match(html, /术数排盘模块/);
   assert.match(html, /八字反排/);

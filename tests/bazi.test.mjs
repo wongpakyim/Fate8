@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { calculateBazi, formatBaziText, getAnnualPillar, parseSolarInput, reverseSearchBazi } from "../lib/bazi.mjs";
 import { calculateFourPillars } from "../lib/four-pillars.mjs";
-import { buildBaziChart, getBaziFocusView, getBaziNodeRelations, getBaziNodeStates, getBaziRelationsByReference, getDefaultLuckSelection } from "../lib/chart-presentation.mjs";
+import { buildBaziChart, getBaziFocusView, getBaziNodeRelations, getBaziNodeStates, getBaziRelationsByReference, getBranchRelationHints, getDefaultLuckSelection } from "../lib/chart-presentation.mjs";
 import { calculateLiuRen, formatLiuRenText } from "../lib/liu-ren.mjs";
 import { calculateQiMen, formatQiMenText } from "../lib/qi-men.mjs";
 import { buildReadingSession } from "../lib/reading-session.mjs";
@@ -23,6 +23,17 @@ test("keeps calculation and presentation as independently reusable modules", () 
   assert.equal(chart.calculation.module.name, "four-pillars");
   assert.ok(chart.fourPillars.year.branch.hiddenStems.length > 0);
   assert.ok(chart.luck.cycles.length === 8);
+});
+
+test("lists branch harmony, break, punishment, clash, and harm hover hints", () => {
+  assert.deepEqual(getBranchRelationHints(2).map(({ type, target, explanation }) => `${type}-${target}-${explanation}`), [
+    "合-亥-结合整合",
+    "破-亥-破坏/不完整",
+    "刑-巳-折磨痛苦",
+    "冲-申-冲击远离",
+    "害-巳-妨碍不得其心",
+  ]);
+  assert.equal(getBranchRelationHints(4).find((relation) => relation.type === "刑").target, "辰");
 });
 
 test("parses ISO and Chinese solar date strings", () => {

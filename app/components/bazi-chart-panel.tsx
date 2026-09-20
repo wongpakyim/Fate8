@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { getAnnualPillar } from "@/lib/four-pillars.mjs";
-import { buildBaziChart, formatBaziText, getBaziFocusView, getDefaultLuckSelection } from "@/lib/chart-presentation.mjs";
+import { buildBaziChart, formatBaziText, getBaziFocusView, getBranchRelationHints, getDefaultLuckSelection } from "@/lib/chart-presentation.mjs";
 import { ChartTimeControls } from "./chart-time-controls";
 import { elementClass } from "./five-elements";
 
@@ -179,7 +179,7 @@ export function BaziChartPanel({ result, copied, onCopy, onDownload, onPreviousT
         <span className="pillar-title">{pillar.label}{index === 2 && <i>命主</i>}</span>
         <span className="god"><b>{pillar.stem.tenGod}</b></span>
         <button type="button" className={`stem chart-character ${elementClass(pillar.stem.element)} ${focusReference.key === `natal-${index}-stem` ? "selected" : ""}${correspondenceClassForStem(pillar.stem.index)}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "stem" })} aria-pressed={focusReference.key === `natal-${index}-stem`}><b>{pillar.stem.name}</b></button>
-        <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${focusReference.key === `natal-${index}-branch` ? "selected" : ""}${correspondenceClassForBranch(pillar.branch.hiddenStems)}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "branch" })} aria-pressed={focusReference.key === `natal-${index}-branch`}><small>{pillar.branch.mainQi.name} · {pillar.branch.mainQi.tenGod}</small><b>{pillar.branch.name}</b></button>
+        <button type="button" className={`branch chart-character ${elementClass(pillar.branch.element)} ${focusReference.key === `natal-${index}-branch` ? "selected" : ""}${correspondenceClassForBranch(pillar.branch.hiddenStems)}`} onClick={() => chooseFocus({ scope: "natal", pillarIndex: index, kind: "branch" })} aria-label={`${pillar.label}地支${pillar.branch.name}，悬浮查看刑冲破害合`} aria-pressed={focusReference.key === `natal-${index}-branch`}><small>{pillar.branch.mainQi.name} · {pillar.branch.mainQi.tenGod}</small><b>{pillar.branch.name}</b><span className={`branch-relation-tooltip tooltip-${index === 0 ? "left" : index === 3 ? "right" : "center"}`} role="tooltip"><strong>{pillar.branch.name}支关系</strong>{getBranchRelationHints(pillar.branch.index).map((relation) => <span className="branch-relation-row" key={relation.type}><b>{relation.type}</b><i>{relation.target}</i><em>{relation.explanation}</em></span>)}</span></button>
         <span className="hidden">{pillar.branch.hiddenStems.map((hidden, hiddenIndex) => <button type="button" className={`hidden-focus ${focusReference.key === `hidden-${index}-${hiddenIndex}` ? "selected" : ""}`} key={hidden.name} onClick={() => chooseFocus({ scope: "hidden", pillarIndex: index, hiddenIndex })} aria-pressed={focusReference.key === `hidden-${index}-${hiddenIndex}`} aria-label={`${pillar.label}${pillar.branch.name}藏干${hidden.name}`}><b>{hidden.name}</b><i>{hidden.tenGod}</i></button>)}</span>
         <span className="nayin">{pillar.naYin}</span>
         <span className="growth-stage day-master-growth">{natalPillars[index].growthStage}</span>
