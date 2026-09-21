@@ -305,10 +305,10 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-flow-summary span { padding: 9px 18px; background: #faf9f1; color: #2c3f35; font-size: 15px; font-weight: 700; }
 .ziwei-flow-summary b { margin-right: 12px; color: #8b3827; }
 .ziwei-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(180px, auto)); gap: 1px; background: #708279; border: 6px solid #f5f5ed; }
-.ziwei-palace { position: relative; min-width: 0; min-height: 180px; padding: 9px 10px 38px; border: 0; border-radius: 0; background: #fffef9; color: #17251e; text-align: left; cursor: pointer; overflow: hidden; }
+.ziwei-palace { position: relative; display: flex; min-width: 0; min-height: 180px; box-sizing: border-box; flex-direction: column; align-items: stretch; justify-content: flex-start; margin: 0; padding: 3px 10px 38px; border: 0; border-radius: 0; background: #fffef9; color: #17251e; text-align: left; vertical-align: top; cursor: pointer; overflow: hidden; }
 .ziwei-palace:hover, .ziwei-palace:focus-visible { z-index: 2; outline: 3px solid #b34a37; outline-offset: -3px; background: #f5f1e7; }
 .ziwei-palace.selected { background: #e8f0e8; box-shadow: inset 0 0 0 3px #315d4a; }
-.ziwei-palace-main { display: flex; align-items: flex-start; gap: 3px; min-width: 0; }
+.ziwei-palace-main { display: flex; flex: 0 0 auto; align-items: flex-start; align-self: stretch; gap: 3px; min-width: 0; margin: 0; padding: 0; }
 .ziwei-palace-head { display: flex; flex: 0 0 20px; flex-direction: column; align-items: center; justify-content: flex-start; gap: 3px; margin: 0; }
 .ziwei-palace-head > span { display: flex; flex-direction: column; align-items: center; gap: 0; font-size: 19.5px; line-height: 1.02; }
 .ziwei-palace-head > em { min-width: 19px; color: #fff; background: #9d3426; font-size: 12px; line-height: 19px; text-align: center; font-style: normal; }

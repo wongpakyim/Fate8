@@ -10,6 +10,7 @@
 - Render each A/B/C star name vertically, hide brightness labels in the Web chart, and place matching natal/decadal/yearly/palace transformations directly below that star.
 - Anchor the vertically stacked palace stem and branch at the upper-left, then flow all vertical star columns immediately to their right.
 - Align all star columns to one size and baseline, tighten horizontal spacing, and size the palace stem/branch 30% larger than the stars.
+- Force every palace content box to top-start alignment so the stem/branch and star columns sit against the upper edge.
 - Add a shared-time Zi Wei domain adapter using San He presentation and Zhongzhou star placement.
 - Add `--mode ziwei`, `chart:ziwei`, `/api/ziwei`, JSON output, and fixed-width TXT output.
 - Load the Zi Wei client bundle only when its tab is opened.
