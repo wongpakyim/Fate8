@@ -24,12 +24,17 @@ const relationAnchorPoints: Record<string, { x: number; y: number }> = {
 
 const mutagenLabels = ["禄", "权", "科", "忌"];
 
-function starNames(stars: Array<{ name: string; brightness?: string }>) {
+function starNames(stars: Array<{ name: string }>, scopes: MutagenScope[]) {
   if (!stars.length) return <span className="ziwei-empty">—</span>;
-  return stars.map((star) => <span className="ziwei-star" key={star.name}>
-    <b>{star.name}</b>
-    {star.brightness && <small>{star.brightness}</small>}
-  </span>);
+  return stars.map((star) => {
+    const transformations = scopes.flatMap((scope) => scope.names.map((name, index) => name === star.name
+      ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${star.name}`} key={`${scope.tone}-${star.name}`}>{scope.prefix}{mutagenLabels[index]}</em>
+      : null).filter(Boolean));
+    return <span className="ziwei-star" key={star.name}>
+      <b>{star.name}</b>
+      {transformations.length > 0 && <span className="ziwei-star-mutagens">{transformations}</span>}
+    </span>;
+  });
 }
 
 function flowStars(stars: Array<{ name: string }>) {
@@ -107,17 +112,13 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
         {result.palaces.map((palace) => {
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
-          const palaceStarNames = new Set([...palace.majorStars, ...palace.minorStars, ...palace.adjectiveStars].map((star) => star.name));
           return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化与三方四正`}>
             <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span><em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em></span>
-            <span className="ziwei-palace-mutagens" aria-label="本宫命限年宫四化">
-              {scopes.map((scope) => <span className={`ziwei-palace-mutagen-slot ${scope.tone}`} key={scope.tone}>
-                {scope.names.map((name, index) => palaceStarNames.has(name) ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${name}`} key={`${scope.tone}-${name}`}>{scope.prefix}{mutagenLabels[index]}</em> : null)}
-              </span>)}
+            <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
+              <span className="ziwei-star-column major" aria-label="甲级星">{starNames(palace.majorStars, scopes)}</span>
+              <span className="ziwei-star-column minor" aria-label="乙级星">{starNames(palace.minorStars, scopes)}</span>
+              <span className="ziwei-star-column adjective" aria-label="丙级星">{starNames(palace.adjectiveStars, scopes)}</span>
             </span>
-            <span className="ziwei-star-row major" aria-label="主曜"><span className="ziwei-stars">{starNames(palace.majorStars)}</span></span>
-            <span className="ziwei-star-row minor" aria-label="辅煞"><span className="ziwei-stars">{starNames(palace.minorStars)}</span></span>
-            <span className="ziwei-star-row adjective" aria-label="杂曜"><span className="ziwei-stars">{starNames(palace.adjectiveStars)}</span></span>
             <span className="ziwei-palace-layers"><span className="ziwei-layer-line"><b>限·{selection.decade.palaceNames[palace.index]}</b><span>{flowStars(selection.decade.stars[palace.index])}</span></span><span className="ziwei-layer-line"><b>年·{selection.year.palaceNames[palace.index]}</b><span>{flowStars(selection.year.stars[palace.index])}</span></span></span>
             <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><span>{palace.changsheng12}</span></span>
           </button>;
