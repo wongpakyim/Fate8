@@ -323,10 +323,10 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-star-mutagens { display: flex; flex-direction: column; align-items: center; gap: 1px; margin-top: 2px; white-space: normal; }
 .ziwei-star-mutagens .ziwei-mutagen { padding-inline: 0; font-size: 8px; line-height: 12px; }
 .ziwei-empty { color: #9aa39d; }
-.ziwei-palace-layers { margin-top: 5px; padding-top: 5px; border-top: 1px dotted #b6c0b7; }
-.ziwei-palace-layers .ziwei-layer-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px; margin: 2px 0; color: #405047; font-size: 11px; }
-.ziwei-palace-layers b { color: #8a3b2c; white-space: nowrap; }
-.ziwei-palace-layers span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ziwei-palace-layers { margin-top: 5px; padding-top: 5px; padding-right: 58px; border-top: 1px dotted #b6c0b7; }
+.ziwei-palace-layers .ziwei-layer-line { display: block; overflow: hidden; margin: 2px 0; color: #405047; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.ziwei-flow-palace-names { position: absolute; right: 3px; bottom: 25px; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; text-align: right; pointer-events: none; }
+.ziwei-flow-palace-names b { color: #8a3b2c; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 16.5px; font-weight: 900; line-height: 1.05; white-space: nowrap; }
 .ziwei-palace-foot { position: absolute; right: 8px; bottom: 7px; left: 8px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 5px; color: #354d40; font-size: 12px; font-weight: 800; line-height: 1; }
 .ziwei-palace-foot > strong { color: #17251e; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 26px; font-weight: 900; line-height: .95; text-align: center; white-space: nowrap; }
 .ziwei-palace-foot > span:last-child { text-align: right; }

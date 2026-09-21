@@ -121,7 +121,8 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
                 <span className="ziwei-star-column adjective" aria-label="丙级星">{starNames(palace.adjectiveStars, scopes)}</span>
               </span>
             </span>
-            <span className="ziwei-palace-layers"><span className="ziwei-layer-line"><b>限·{selection.decade.palaceNames[palace.index]}</b><span>{flowStars(selection.decade.stars[palace.index])}</span></span><span className="ziwei-layer-line"><b>年·{selection.year.palaceNames[palace.index]}</b><span>{flowStars(selection.year.stars[palace.index])}</span></span></span>
+            <span className="ziwei-palace-layers"><span className="ziwei-layer-line" aria-label="大限星曜">{flowStars(selection.decade.stars[palace.index])}</span><span className="ziwei-layer-line" aria-label="流年星曜">{flowStars(selection.year.stars[palace.index])}</span></span>
+            <span className="ziwei-flow-palace-names" aria-label="大限与流年宫位"><b>限·{selection.decade.palaceNames[palace.index]}</b><b>年·{selection.year.palaceNames[palace.index]}</b></span>
             <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><span>{palace.changsheng12}</span></span>
           </button>;
         })}

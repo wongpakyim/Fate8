@@ -11,6 +11,7 @@
 - Anchor the vertically stacked palace stem and branch at the upper-left, then flow all vertical star columns immediately to their right.
 - Align all star columns to one size and baseline, tighten horizontal spacing, and size the palace stem/branch 30% larger than the stars.
 - Force every palace content box to top-start alignment so the stem/branch and star columns sit against the upper edge.
+- Move decadal and yearly palace names to the right edge above the growth stage and enlarge them by 50%.
 - Add a shared-time Zi Wei domain adapter using San He presentation and Zhongzhou star placement.
 - Add `--mode ziwei`, `chart:ziwei`, `/api/ziwei`, JSON output, and fixed-width TXT output.
 - Load the Zi Wei client bundle only when its tab is opened.
