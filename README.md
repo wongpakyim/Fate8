@@ -6,10 +6,10 @@
 
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22.13-315f50?style=flat-square)
 ![React](https://img.shields.io/badge/React-19-315f50?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-25%20passing-315f50?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-46%20passing-315f50?style=flat-square)
 ![Interface](https://img.shields.io/badge/Web%20%7C%20CLI%20%7C%20API-supported-987348?style=flat-square)
 
-一个以统一历法核心为基础的传统术数排盘项目，提供八字、大六壬、拆补法奇门与八字反查。Web、CLI 和 HTTP API 使用同一份时间、节气及四柱计算结果，支持 JSON、格式化 TXT、文件下载和模块化 ESM 调用。
+一个以统一历法核心为基础的传统术数排盘项目，提供八字、大六壬、拆补法奇门、紫微斗数与八字反查。Web、CLI 和 HTTP API 使用同一份时间、节气及四柱计算结果，支持 JSON、格式化 TXT、文件下载和模块化 ESM 调用。
 
 > 当前版本适合传统文化研究、程序集成与排盘界面原型验证。临近节气、换日或时辰边界，以及 1582 年以前的历史日期，请使用高精度历表并结合所采用门派口径复核。
 
@@ -23,9 +23,10 @@
 | 八字反查 | 在公元 1000—2100 年间按四柱搜索阳历日期与标准时辰区间；固定记为“反排”、东经 120° |
 | 大六壬 | 中气自动换月将、手动月将、十二宫天盘、天将、神煞、右起四课、三传 |
 | 拆补奇门 | 节气定局、符头、三元三候、阴阳九局、旬首、值符值使、九宫、天地盘干长生 |
+| 紫微斗数 | 三合派十二宫、中州派安星、甲乙丙级星曜、大限与流年联动、四化 |
 | 多种接入 | Web Tab、Node/ESM、CLI、HTTP API、JSON、TXT 与下载文件 |
 
-Web 端采用新中式水墨青山主题，八字、反排、六壬和奇门分别位于独立 Tab。八字录入完成后可自动收起，也可点击“挂起”主动折叠；三个详细盘面均支持一键复制文字简排。
+Web 端采用新中式水墨青山主题，八字、反排、六壬、奇门和紫微分别位于独立 Tab。八字录入完成后可自动收起，也可点击“挂起”主动折叠；四个详细盘面均支持一键复制文字简排。
 
 ## 分层架构
 
@@ -49,7 +50,7 @@ Web 端采用新中式水墨青山主题，八字、反排、六壬和奇门分�
        Web UI    CLI      HTTP API
 ```
 
-关键原则：时间只计算一次。六壬、奇门和八字展示层只消费 `four-pillars` 的结果，不各自重新解释阳历时间。
+关键原则：时间只计算一次。六壬、奇门、紫微和八字展示层只消费 `four-pillars` 的结果，不各自重新解释阳历时间。
 
 更完整的边界说明见 [架构文档](./docs/architecture.md)。
 
@@ -111,6 +112,9 @@ npm run bazi -- --mode liuren --month-general 子 --input examples/birth.json --
 # 拆补法奇门九宫
 npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --format text
 
+# 紫微斗数：三合盘面、中州派安星
+npm run chart:ziwei -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male --format text
+
 # 八字反查
 npm run bazi -- --reverse "壬申 癸卯 庚寅 癸未" --start 1000 --end 2100
 ```
@@ -125,6 +129,7 @@ npm run bazi -- --reverse "壬申 癸卯 庚寅 癸未" --start 1000 --end 2100
 import { calculateFourPillars } from "./lib/four-pillars.mjs";
 import { buildSimpleChart, formatSimpleChartText } from "./lib/simple-chart.mjs";
 import { buildBaziChart } from "./lib/chart-presentation.mjs";
+import { calculateZiWei, formatZiWeiText } from "./lib/zi-wei.mjs";
 
 const calculation = calculateFourPillars({
   solarTime: "1992-03-15 14:30",
@@ -134,11 +139,13 @@ const calculation = calculateFourPillars({
 
 const simple = buildSimpleChart(calculation);
 const bazi = buildBaziChart(calculation);
+const ziWei = calculateZiWei(calculation, { referenceYear: 2026 });
 
 console.log(calculation.fourPillars.text);
 console.log(JSON.stringify(simple, null, 2));
 console.log(formatSimpleChartText(simple));
 console.log(bazi.luck.cycles);
+console.log(formatZiWeiText(ziWei));
 ```
 
 ## HTTP API
@@ -151,6 +158,7 @@ console.log(bazi.luck.cycles);
 | `GET /api/bazi` | 八字详细盘 |
 | `GET /api/liuren` | 大六壬盘 |
 | `GET /api/qimen` | 拆补法奇门盘 |
+| `GET /api/ziwei` | 三合派紫微盘、中州派安星及大限流年 |
 
 示例：
 
@@ -158,6 +166,7 @@ console.log(bazi.luck.cycles);
 GET /api/simple?solarTime=1992-03-15%2014:30&longitude=113.27
 GET /api/liuren?solarTime=1992-03-15%2014:30&longitude=113.27&format=text
 GET /api/qimen?solarTime=1992-03-15%2014:30&longitude=113.27&format=file
+GET /api/ziwei?solarTime=1992-03-15%2014:30&longitude=113.27&sex=male&format=text
 ```
 
 - 不传 `format`：返回 JSON。
@@ -177,6 +186,7 @@ GET /api/qimen?solarTime=1992-03-15%2014:30&longitude=113.27&format=file
 | `reverseSearch` | 反查年份范围与最大返回数 |
 | `liuRen.monthGeneralMethod` | 默认 `middle-qi`，按中气换将 |
 | `qiMen.method` | 默认 `chai-bu`，拆补法 |
+| 紫微口径 | 三合派盘面、中州派安星；详见 `docs/ziwei-conventions.md` |
 
 ## 测试
 
@@ -191,7 +201,7 @@ npm run lint
 node --test tests/text-charts.test.mjs
 ```
 
-当前覆盖四柱解析、换日边界、反查回环、模块分层、六壬月将与课传、奇门定局与宫位、CLI 文本盘、HTTP API 和服务端渲染。测试矩阵见 [简式排盘测试用例](./docs/simple-chart-test-cases.md)。
+当前覆盖四柱解析、换日边界、反查回环、模块分层、六壬月将与课传、奇门定局与宫位、紫微十二宫与限年、CLI 文本盘、HTTP API 和服务端渲染。测试矩阵见 [简式排盘测试用例](./docs/simple-chart-test-cases.md)。
 
 ## 项目结构
 

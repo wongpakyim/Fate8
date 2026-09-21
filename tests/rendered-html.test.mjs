@@ -36,6 +36,7 @@ test("server-renders the finished product page and metadata", async () => {
   assert.match(html, /八字反排/);
   assert.match(html, /六壬/);
   assert.match(html, /奇门/);
+  assert.match(html, /紫微/);
   assert.match(html, /挂起/);
   assert.match(html, /现在/);
   assert.match(html, /上一个时辰/);

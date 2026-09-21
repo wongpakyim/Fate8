@@ -5,6 +5,7 @@ import { calculateFourPillars, reverseSearchFourPillars } from "../lib/four-pill
 import { buildBaziChart, formatBaziText } from "../lib/chart-presentation.mjs";
 import { formatLiuRenText } from "../lib/liu-ren.mjs";
 import { formatQiMenText } from "../lib/qi-men.mjs";
+import { calculateZiWei, formatZiWeiText } from "../lib/zi-wei.mjs";
 import { buildReadingSession } from "../lib/reading-session.mjs";
 import { formatMetaphysicsCoreText } from "../lib/metaphysics-core.mjs";
 import { buildSimpleChart, formatSimpleChartText } from "../lib/simple-chart.mjs";
@@ -26,7 +27,7 @@ function parseArgs(argv) {
 }
 
 function help() {
-  return `知命排盘 CLI 0.1.0
+  return `知命排盘 CLI 0.2.0
 
 排盘：
   npm run bazi -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male
@@ -39,6 +40,10 @@ function help() {
 奇门：
   npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27
   npm run bazi -- --mode qimen --format text --input ./birth.json
+
+紫微：
+  npm run bazi -- --mode ziwei --datetime "1992-03-15 14:30" --longitude 113.27 --sex male
+  npm run bazi -- --mode ziwei --format text --input ./birth.json
 
 公共核心与简盘：
   npm run bazi -- --mode core --datetime "1992-03-15 14:30" --longitude 113.27
@@ -59,8 +64,10 @@ function help() {
   --boundary    23 或 24 时换日
   --solar-time  apparent / mean / none
   --format      json / text，默认 json
-  --mode        pillars / core（公共核心）/ simple（简化全盘）/ chart（八字，默认）/ liuren / qimen / all
+  --mode        pillars / core（公共核心）/ simple（简化全盘）/ chart（八字，默认）/ liuren / qimen / ziwei / all
   --month-general  六壬手动月将：子/神后等；省略按中气自动换将
+  --reference-year 紫微默认选择参考年份；默认为当前年
+  --decade-index / --year  紫微文字盘选择大限序号和流年
   --out         写入文件；省略则输出到终端
   --help        显示帮助`;
 }
@@ -102,16 +109,17 @@ try {
     else if (mode === "simple") payload = getSimple();
     else if (mode === "liuren") payload = getSimple().liuRen;
     else if (mode === "qimen") payload = getSimple().qiMen;
+    else if (mode === "ziwei") payload = calculateZiWei(calculation, { referenceYear: Number(args["reference-year"] || new Date().getFullYear()) });
     else if (mode === "all") {
       const session = buildReadingSession(calculation, simpleOptions);
-      payload = { core: session.core, simple: session.simple, fourPillars: session.calculation, bazi: session.bazi, liuRen: session.liuRen, qiMen: session.qiMen };
+      payload = { core: session.core, simple: session.simple, fourPillars: session.calculation, bazi: session.bazi, liuRen: session.liuRen, qiMen: session.qiMen, ziWei: calculateZiWei(calculation) };
     }
     else payload = buildBaziChart(calculation);
   }
   let output;
   if (String(args.format || "json") === "text" && !args.reverse) {
     const mode = String(args.mode || "chart");
-    output = mode === "pillars" ? `四柱：${payload.fourPillars.text}\n起运：${payload.luckStart.startTime}\n方向：${payload.luckStart.direction}\n起运年龄：${payload.luckStart.startAge} 岁` : mode === "core" ? formatMetaphysicsCoreText(payload) : mode === "simple" ? formatSimpleChartText(payload) : mode === "liuren" ? formatLiuRenText(payload) : mode === "qimen" ? formatQiMenText(payload) : mode === "all" ? `${formatSimpleChartText(payload.simple)}\n\n${formatBaziText(payload.bazi)}` : formatBaziText(payload);
+    output = mode === "pillars" ? `四柱：${payload.fourPillars.text}\n起运：${payload.luckStart.startTime}\n方向：${payload.luckStart.direction}\n起运年龄：${payload.luckStart.startAge} 岁` : mode === "core" ? formatMetaphysicsCoreText(payload) : mode === "simple" ? formatSimpleChartText(payload) : mode === "liuren" ? formatLiuRenText(payload) : mode === "qimen" ? formatQiMenText(payload) : mode === "ziwei" ? formatZiWeiText(payload, args["decade-index"], args.year) : mode === "all" ? `${formatSimpleChartText(payload.simple)}\n\n${formatBaziText(payload.bazi)}\n\n${formatZiWeiText(payload.ziWei)}` : formatBaziText(payload);
   } else output = JSON.stringify(payload, null, 2);
   if (args.out) writeFileSync(String(args.out), output + "\n", "utf8");
   else console.log(output);

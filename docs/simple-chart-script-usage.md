@@ -1,6 +1,6 @@
 # 简式排盘脚本调用说明
 
-简式排盘脚本入口是 `scripts/bazi.mjs`。它与 Web、HTTP API 共用 `four-pillars`、`metaphysics-core`、`liu-ren` 和 `qi-men`，不会单独计算另一套时间或四柱。
+简式排盘脚本入口是 `scripts/bazi.mjs`。它与 Web、HTTP API 共用 `four-pillars`、`metaphysics-core`、`liu-ren`、`qi-men` 和独立的 `zi-wei`，不会单独计算另一套时间或四柱。
 
 ## 1. 最常用调用
 
@@ -36,7 +36,10 @@ npm run bazi -- --mode liuren --month-general 子 --input examples/birth.json --
 # 拆补法奇门九宫 TXT
 npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --format text
 
-# 全部领域对象：四柱、八字、六壬、奇门
+# 紫微斗数十二宫 TXT（三合盘面、中州派安星）
+npm run chart:ziwei -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male --format text
+
+# 全部领域对象：四柱、八字、六壬、奇门、紫微
 npm run bazi -- --mode all --input examples/birth.json --format json
 
 # 八字反排：固定按东经 120°、UTC+8 标准时返回匹配区间
@@ -82,12 +85,14 @@ Get-Content -Raw examples\birth.json | npm run chart:simple -- --stdin --format 
 
 | 参数 | 说明 |
 | --- | --- |
-| `--mode` | `pillars`、`core`、`simple`、`chart`、`liuren`、`qimen`、`all` |
+| `--mode` | `pillars`、`core`、`simple`、`chart`、`liuren`、`qimen`、`ziwei`、`all` |
 | `--format` | `json` 或 `text` |
 | `--out` | 把结果写入指定文件 |
 | `--boundary` | `23` 为子初换日，`24` 为午夜换日 |
 | `--solar-time` | `apparent` 真太阳时、`mean` 平太阳时、`none` 不校时 |
 | `--month-general` | 六壬手动月将，可传 `子` 或 `神后`；省略时按中气自动换将 |
+| `--reference-year` | 紫微默认定位的参考流年，省略时用当前年 |
+| `--decade-index` / `--year` | 紫微 TXT 指定大限序号与流年 |
 | `--timezone` | 时区偏移，默认 `8` |
 
 ## 5. ESM 模块调用
@@ -97,6 +102,7 @@ import { calculateFourPillars } from "./lib/four-pillars.mjs";
 import { buildSimpleChart, formatSimpleChartText } from "./lib/simple-chart.mjs";
 import { formatLiuRenText } from "./lib/liu-ren.mjs";
 import { formatQiMenText } from "./lib/qi-men.mjs";
+import { calculateZiWei, formatZiWeiText } from "./lib/zi-wei.mjs";
 
 const pillars = calculateFourPillars({
   solarTime: "1992-03-15 14:30",
@@ -104,17 +110,20 @@ const pillars = calculateFourPillars({
 });
 
 const simple = buildSimpleChart(pillars);
+const ziWei = calculateZiWei(pillars, { referenceYear: 2026 });
 
 console.log(JSON.stringify(simple, null, 2));
 console.log(formatSimpleChartText(simple));
 console.log(formatLiuRenText(simple.liuRen));
 console.log(formatQiMenText(simple.qiMen));
+console.log(formatZiWeiText(ziWei));
 ```
 
 ## 6. TXT 输出结构
 
 - 六壬：共用时间、四柱、月将、占时、课式、三传、右起四课、环式天盘十二宫。
 - 奇门：共用时间、四柱、节气、局数、符头、旬首、值符值使，以及巽离坤／震中兑／艮坎乾九宫格。
+- 紫微：共用真太阳时与四柱、十二宫环盘、甲乙丙级星曜、大限流年和四化。
 - 四维宫长生使用顿号合并两个地支状态；寄宫或双天盘干使用斜线分组。
 
 TXT 适合终端查看、复制和文件存档；程序间稳定交换应优先使用 JSON。

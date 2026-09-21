@@ -1,0 +1,14 @@
+# Changelog
+
+## 0.2.0 — in development
+
+- Add a dedicated Zi Wei Dou Shu Web tab with a compact twelve-palace ring.
+- Add clickable decadal limits and annual-year selection with palace overlays and Four Transformations.
+- Add a shared-time Zi Wei domain adapter using San He presentation and Zhongzhou star placement.
+- Add `--mode ziwei`, `chart:ziwei`, `/api/ziwei`, JSON output, and fixed-width TXT output.
+- Load the Zi Wei client bundle only when its tab is opened.
+
+## 0.1.0
+
+- Establish the shared Four Pillars, BaZi, Da Liu Ren, Chai-Bu Qi Men, reverse lookup, CLI, API, and Web modules.
+- Tag the baseline release as `v0.1.0`.

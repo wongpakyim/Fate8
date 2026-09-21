@@ -6,10 +6,10 @@ English | [简体中文](./README.md)
 
 ![Node.js](https://img.shields.io/badge/Node.js-%3E%3D22.13-315f50?style=flat-square)
 ![React](https://img.shields.io/badge/React-19-315f50?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-25%20passing-315f50?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-46%20passing-315f50?style=flat-square)
 ![Interface](https://img.shields.io/badge/Web%20%7C%20CLI%20%7C%20API-supported-987348?style=flat-square)
 
-Fate8 is a modular Chinese metaphysics charting project built on one shared calendrical core. It currently provides BaZi, Da Liu Ren, Chai-Bu Qi Men Dun Jia, and reverse Four Pillars lookup. The Web application, CLI, and HTTP APIs consume the same time correction, solar-term, and Four Pillars result and can return JSON, formatted plain text, downloadable files, or reusable ESM objects.
+Fate8 is a modular Chinese metaphysics charting project built on one shared calendrical core. It currently provides BaZi, Da Liu Ren, Chai-Bu Qi Men Dun Jia, Zi Wei Dou Shu, and reverse Four Pillars lookup. The Web application, CLI, and HTTP APIs consume the same time correction, solar-term, and Four Pillars result and can return JSON, formatted plain text, downloadable files, or reusable ESM objects.
 
 > This version is intended for traditional-culture research, software integration, and chart-interface prototyping. Dates close to a solar-term, day, or double-hour boundary—and historical dates before 1582—should be checked against high-precision ephemerides and the rules of the tradition being followed.
 
@@ -23,9 +23,10 @@ Fate8 is a modular Chinese metaphysics charting project built on one shared cale
 | Reverse lookup | Searches real Gregorian matches for a Four Pillars combination between CE 1000 and 2100 |
 | Da Liu Ren | Middle-qi month-general switching, manual month general, twelve-palace heaven plate, heavenly generals, Shen Sha, right-to-left Four Lessons, and Three Transmissions |
 | Chai-Bu Qi Men | Solar-term setup, Fu Tou, three yuan/hou, yin/yang nine configurations, Xun Shou, Chief Star/Door, and a full nine-palace chart with growth stages |
+| Zi Wei Dou Shu | San He twelve-palace presentation, Zhongzhou star placement, A/B/C star groups, decadal limits, annual years, and Four Transformations |
 | Integration | Separate Web tabs, Node/ESM, CLI, HTTP API, JSON, formatted TXT, and downloadable files |
 
-The Web UI uses a modern Chinese ink-landscape visual language. BaZi, reverse lookup, Liu Ren, and Qi Men are separated into dedicated tabs. Input can collapse after chart generation or through the Suspend control, and every detailed chart can copy its formatted text version.
+The Web UI uses a modern Chinese ink-landscape visual language. BaZi, reverse lookup, Liu Ren, Qi Men, and Zi Wei are separated into dedicated tabs. Input can collapse after chart generation or through the Suspend control, and every detailed chart can copy its formatted text version.
 
 ## Architecture
 
@@ -111,6 +112,9 @@ npm run bazi -- --mode liuren --month-general 子 --input examples/birth.json --
 # Chai-Bu Qi Men nine-palace chart
 npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --format text
 
+# Zi Wei Dou Shu: San He layout with Zhongzhou star placement
+npm run chart:ziwei -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male --format text
+
 # Reverse Four Pillars lookup
 npm run bazi -- --reverse "壬申 癸卯 庚寅 癸未" --start 1000 --end 2100
 ```
@@ -123,6 +127,7 @@ See the [script usage guide](./docs/simple-chart-script-usage.md) for all parame
 import { calculateFourPillars } from "./lib/four-pillars.mjs";
 import { buildSimpleChart, formatSimpleChartText } from "./lib/simple-chart.mjs";
 import { buildBaziChart } from "./lib/chart-presentation.mjs";
+import { calculateZiWei, formatZiWeiText } from "./lib/zi-wei.mjs";
 
 const calculation = calculateFourPillars({
   solarTime: "1992-03-15 14:30",
@@ -132,11 +137,13 @@ const calculation = calculateFourPillars({
 
 const simple = buildSimpleChart(calculation);
 const bazi = buildBaziChart(calculation);
+const ziWei = calculateZiWei(calculation, { referenceYear: 2026 });
 
 console.log(calculation.fourPillars.text);
 console.log(JSON.stringify(simple, null, 2));
 console.log(formatSimpleChartText(simple));
 console.log(bazi.luck.cycles);
+console.log(formatZiWeiText(ziWei));
 ```
 
 ## HTTP API
@@ -149,6 +156,7 @@ console.log(bazi.luck.cycles);
 | `GET /api/bazi` | Detailed BaZi result |
 | `GET /api/liuren` | Da Liu Ren result |
 | `GET /api/qimen` | Chai-Bu Qi Men result |
+| `GET /api/ziwei` | San He Zi Wei result with Zhongzhou star placement and time layers |
 
 Examples:
 
@@ -156,6 +164,7 @@ Examples:
 GET /api/simple?solarTime=1992-03-15%2014:30&longitude=113.27
 GET /api/liuren?solarTime=1992-03-15%2014:30&longitude=113.27&format=text
 GET /api/qimen?solarTime=1992-03-15%2014:30&longitude=113.27&format=file
+GET /api/ziwei?solarTime=1992-03-15%2014:30&longitude=113.27&sex=male&format=text
 ```
 
 - No `format`: JSON.
@@ -189,7 +198,7 @@ npm run lint
 node --test tests/text-charts.test.mjs
 ```
 
-Coverage includes input parsing, day-boundary modes, reverse lookup, architecture boundaries, Liu Ren month generals and lessons/transmissions, Qi Men setup and palaces, CLI text charts, HTTP APIs, and server rendering. See [Text Chart Test Cases](./docs/simple-chart-test-cases.md).
+Coverage includes input parsing, day-boundary modes, reverse lookup, architecture boundaries, Liu Ren month generals and lessons/transmissions, Qi Men setup and palaces, Zi Wei palaces and time layers, CLI text charts, HTTP APIs, and server rendering. See [Text Chart Test Cases](./docs/simple-chart-test-cases.md).
 
 ## Repository Layout
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import divisionSource from "@/data/china-divisions.json";
 import { formatBirthCode, formatCurrentDateTime, parseBirthCode, shiftSolarDateTime } from "@/lib/birth-code.mjs";
 import { calculateFourPillars, REVERSE_SEARCH_BASIS, reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
@@ -25,6 +25,7 @@ type Division = {
 
 type FourPillarsCalculation = ReturnType<typeof calculateFourPillars>;
 type ReverseResult = ReturnType<typeof reverseSearchFourPillars>;
+const ZiWeiPanel = lazy(() => import("@/app/components/zi-wei-panel").then((module) => ({ default: module.ZiWeiPanel })));
 
 const divisions = divisionSource as Division[];
 const defaultProvinceCode = "440000";
@@ -68,7 +69,7 @@ export default function Home() {
   const [manualMonthGeneral, setManualMonthGeneral] = useState("子");
   const [selectedPath, setSelectedPath] = useState<number | null>(null);
   const [error, setError] = useState("");
-  const [copiedPanel, setCopiedPanel] = useState<"bazi" | "liuren" | "qimen" | null>(null);
+  const [copiedPanel, setCopiedPanel] = useState<"bazi" | "liuren" | "qimen" | "ziwei" | null>(null);
   const [reverseText, setReverseText] = useState(calculation.fourPillars.text);
   const [reverseStart, setReverseStart] = useState("1000");
   const [reverseEnd, setReverseEnd] = useState("2100");
@@ -143,7 +144,7 @@ export default function Home() {
     }
   }
 
-  async function copyPanelText(panel: "bazi" | "liuren" | "qimen", text: string) {
+  async function copyPanelText(panel: "bazi" | "liuren" | "qimen" | "ziwei", text: string) {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedPanel(panel);
@@ -262,6 +263,8 @@ export default function Home() {
 
       {activeTab === "qimen" && <QiMenPanel result={qiMen} dayPillar={calculation.fourPillars.day.value} hourPillar={calculation.fourPillars.hour.value} copied={copiedPanel === "qimen"} onCopy={() => copyPanelText("qimen", formatQiMenText(qiMen))} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} />}
 
+      {activeTab === "ziwei" && <Suspense fallback={<section className="module-page ziwei-loading">正在展开紫微十二宫…</section>}><ZiWeiPanel key={calculation.time.trueSolar} calculation={calculation} copied={copiedPanel === "ziwei"} onCopy={(text) => copyPanelText("ziwei", text)} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} /></Suspense>}
+
       {activeTab === "bazi" && <section className="reverse-teaser" id="reverse">
         <span className="seal">反</span><div><small>已有八字，寻找出生时刻？</small><h2>八字反查 · 横跨千年寻时</h2><p>按年、月、日、时四柱筛选真实阳历时间，支持经度与换日口径复核。</p></div><button onClick={openReverse}>进入反查 <span>1000—2100</span></button>
       </section>}
@@ -274,7 +277,7 @@ export default function Home() {
       {activeTab === "reverse" && <ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSearch={searchReverse} onApply={applyReverseMatch} />}
 
       {copiedPanel && <div className="copy-toast" role="status">盘面信息已复制，可在其他地方直接粘贴</div>}
-      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Modules v0.4.0</span></footer>
+      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.0</span></footer>
     </main>
   );
 }

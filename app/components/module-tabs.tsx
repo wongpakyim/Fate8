@@ -1,10 +1,11 @@
-export type ModuleTab = "bazi" | "reverse" | "liuren" | "qimen";
+export type ModuleTab = "bazi" | "reverse" | "liuren" | "qimen" | "ziwei";
 
 const tabs: Array<{ id: ModuleTab; label: string }> = [
   { id: "bazi", label: "八字" },
   { id: "reverse", label: "八字反排" },
   { id: "liuren", label: "六壬" },
   { id: "qimen", label: "奇门" },
+  { id: "ziwei", label: "紫微" },
 ];
 
 export function ModuleTabs({ active, onChange }: { active: ModuleTab; onChange: (tab: ModuleTab) => void }) {

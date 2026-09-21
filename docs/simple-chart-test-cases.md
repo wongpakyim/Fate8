@@ -13,7 +13,7 @@ node --test tests/text-charts.test.mjs
 npm run lint
 ```
 
-文本盘面的实际回归用例位于 `tests/text-charts.test.mjs`，基础术数数据用例位于 `tests/bazi.test.mjs`，API 和服务端页面用例位于 `tests/rendered-html.test.mjs`。
+文本盘面的实际回归用例位于 `tests/text-charts.test.mjs`，基础术数数据用例位于 `tests/bazi.test.mjs`，API 和服务端页面用例位于 `tests/rendered-html.test.mjs`；紫微领域、CLI 与 API 用例位于 `tests/zi-wei*.test.mjs`。
 
 ## 2. 固定测试输入
 
@@ -43,12 +43,18 @@ npm run lint
 | QM-04 | 奇门宫内信息 | 八个外宫各有天盘长生和地盘长生 |
 | CLI-01 | 六壬脚本文本 | 退出码为 0，输出含右起四课和天盘十二宫 |
 | CLI-02 | 奇门脚本文本 | 退出码为 0，输出含完整九宫格 |
+| ZW-01 | 紫微共用时间 | 四柱、标准时与真太阳时和公共层一致 |
+| ZW-02 | 紫微十二宫 | 恰有 12 宫、14 主星与 12 组大限 |
+| ZW-03 | 大限流年 | 参考年定位到正确大限，宫名和流曜均为 12 宫 |
+| ZW-04 | 紫微文字盘 | 十二宫环盘等宽，中心含共用八字 |
+| CLI-03 | 紫微脚本 | JSON 可序列化，TXT 输出完整十二宫环盘 |
 
 ## 4. 手工验收命令
 
 ```bash
 npm run bazi -- --mode liuren --datetime "1992-03-15 14:30" --longitude 113.27 --format text
 npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --format text
+npm run chart:ziwei -- --datetime "1992-03-15 14:30" --longitude 113.27 --sex male --reference-year 2026 --format text
 ```
 
 六壬验收时应看到：
@@ -71,6 +77,7 @@ npm run bazi -- --mode qimen --datetime "1992-03-15 14:30" --longitude 113.27 --
 GET /api/liuren?solarTime=1992-03-15%2014:30&longitude=113.27&format=text
 GET /api/qimen?solarTime=1992-03-15%2014:30&longitude=113.27&format=text
 GET /api/simple?solarTime=1992-03-15%2014:30&longitude=113.27&format=text
+GET /api/ziwei?solarTime=1992-03-15%2014:30&longitude=113.27&sex=male&referenceYear=2026&format=text
 ```
 
 `format=file` 应返回相同正文并附带文本下载文件名；不传 `format` 时应返回 JSON。
