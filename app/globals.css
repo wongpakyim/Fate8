@@ -305,12 +305,11 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-flow-summary span { padding: 9px 18px; background: #faf9f1; color: #2c3f35; font-size: 15px; font-weight: 700; }
 .ziwei-flow-summary b { margin-right: 12px; color: #8b3827; }
 .ziwei-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(180px, auto)); gap: 1px; background: #708279; border: 6px solid #f5f5ed; }
-.ziwei-palace { position: relative; min-width: 0; min-height: 180px; padding: 9px 10px 7px; border: 0; border-radius: 0; background: #fffef9; color: #17251e; text-align: left; cursor: pointer; overflow: hidden; }
+.ziwei-palace { position: relative; min-width: 0; min-height: 180px; padding: 9px 38px 38px 10px; border: 0; border-radius: 0; background: #fffef9; color: #17251e; text-align: left; cursor: pointer; overflow: hidden; }
 .ziwei-palace:hover, .ziwei-palace:focus-visible { z-index: 2; outline: 3px solid #b34a37; outline-offset: -3px; background: #f5f1e7; }
 .ziwei-palace.selected { background: #e8f0e8; box-shadow: inset 0 0 0 3px #315d4a; }
-.ziwei-palace-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 7px; margin-bottom: 6px; }
+.ziwei-palace-head { display: flex; align-items: center; justify-content: space-between; gap: 7px; margin-bottom: 6px; }
 .ziwei-palace-head > span { display: flex; gap: 2px; font-size: 21px; }
-.ziwei-palace-head > strong { font-size: 17px; color: #17251e; }
 .ziwei-palace-head > em { min-width: 19px; color: #fff; background: #9d3426; font-size: 12px; line-height: 19px; text-align: center; font-style: normal; }
 .ziwei-star-row { display: grid; grid-template-columns: 62px minmax(0, 1fr); align-items: start; gap: 4px; margin: 3px 0; }
 .ziwei-star-row > small { color: #67766d; font-size: 11px; font-weight: 800; line-height: 20px; }
@@ -329,7 +328,9 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-palace-layers .ziwei-layer-line { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 5px; margin: 2px 0; color: #405047; font-size: 11px; }
 .ziwei-palace-layers b { color: #8a3b2c; white-space: nowrap; }
 .ziwei-palace-layers span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ziwei-palace-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; color: #354d40; font-size: 12px; font-weight: 800; }
+.ziwei-palace-foot { position: absolute; right: 8px; bottom: 7px; left: 8px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 5px; color: #354d40; font-size: 12px; font-weight: 800; line-height: 1; }
+.ziwei-palace-foot > strong { color: #17251e; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 26px; font-weight: 900; line-height: .95; text-align: center; white-space: nowrap; }
+.ziwei-palace-foot > span:last-child { text-align: right; }
 .ziwei-center { z-index: 1; display: grid; place-items: center; background: #fffef9; border: 1px solid #708279; }
 .ziwei-center > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 3vw, 42px); }
 .ziwei-center p { display: flex; flex-direction: column; margin: 0; text-align: center; }
@@ -355,22 +356,14 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-star-row { display: block; }
 .ziwei-star-row > .ziwei-stars { display: flex; flex-wrap: wrap; gap: 2px 7px; min-width: 0; }
 .ziwei-palace.palace-selected { z-index: 3; outline: 3px solid #d66a14; outline-offset: -3px; }
-.ziwei-mutagen-band { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #a4afa7; border-bottom: 1px solid #87998c; }
-.ziwei-mutagen-group { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; min-height: 42px; padding: 7px 10px; background: #faf9f1; }
-.ziwei-mutagen-group > small { width: 44px; color: #495a50; font-size: 12px; font-weight: 900; }
-.ziwei-mutagen-item { display: inline-flex; align-items: center; gap: 3px; color: #25362d; font-size: 12px; }
-.ziwei-mutagen-item > b { font-size: 13px; }
 .ziwei-mutagen { display: inline-block; padding: 1px 3px; border-radius: 2px; color: #fff; font-size: 10px; font-style: normal; font-weight: 900; line-height: 16px; white-space: nowrap; }
 .ziwei-mutagen.natal { background: #b3261e; }
 .ziwei-mutagen.decadal { background: #16784b; }
 .ziwei-mutagen.yearly { background: #1769aa; }
 .ziwei-mutagen.palace { background: #d66a14; }
-.ziwei-star .ziwei-mutagen { margin-left: 2px; color: #fff; font-size: 9px; line-height: 14px; }
-.ziwei-star .ziwei-mutagen.natal { background: #b3261e; }
-.ziwei-star .ziwei-mutagen.decadal { background: #16784b; }
-.ziwei-star .ziwei-mutagen.yearly { background: #1769aa; }
-.ziwei-star .ziwei-mutagen.palace { background: #d66a14; }
-.ziwei-palace-prompt { color: #8b6a4d; font-size: 12px; font-weight: 800; }
+.ziwei-palace-mutagens { position: absolute; top: 6px; right: 4px; z-index: 4; display: grid; grid-template-rows: repeat(4, minmax(18px, auto)); width: 31px; gap: 2px; pointer-events: none; }
+.ziwei-palace-mutagen-slot { display: flex; min-height: 18px; flex-direction: column; align-items: flex-end; gap: 1px; }
+.ziwei-palace-mutagen-slot .ziwei-mutagen { padding-inline: 2px; font-size: 10px; line-height: 16px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .72); }
 
 @media (max-width: 980px) {
   .ziwei-card { width: 100%; min-width: 0; overflow-x: auto; }
@@ -378,17 +371,17 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 }
 
 @media (max-width: 680px) {
-  .ziwei-mutagen-band { grid-template-columns: 1fr; min-width: 680px; }
+  .ziwei-palace-foot > strong { font-size: 24px; }
 }
 /* Zi Wei three-harmony and opposite connections */
 .ziwei-grid { position: relative; }
-.ziwei-relation-lines { position: absolute; z-index: 5; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; pointer-events: none; }
-.ziwei-relation-lines line { vector-effect: non-scaling-stroke; fill: none; stroke-linecap: round; }
-.ziwei-relation-lines .trine { stroke: #267166; stroke-width: 3; opacity: .68; }
-.ziwei-relation-lines .opposite { stroke: #9d3426; stroke-width: 3; stroke-dasharray: 8 6; opacity: .72; }
-.ziwei-relation-lines circle { vector-effect: non-scaling-stroke; fill: #d66a14; stroke: #fffef9; stroke-width: 2; }
-.ziwei-palace.trine-related { box-shadow: inset 0 0 0 2px #267166; }
-.ziwei-palace.opposite-related { box-shadow: inset 0 0 0 2px #9d3426; }
+.ziwei-relation-lines { position: absolute; z-index: 2; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; pointer-events: none; }
+.ziwei-relation-lines line, .ziwei-relation-lines polygon { vector-effect: non-scaling-stroke; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ziwei-relation-lines .trine { stroke: #267166; stroke-width: 2; opacity: .72; }
+.ziwei-relation-lines .opposite { stroke: #9d3426; stroke-width: 2; stroke-dasharray: 7 6; opacity: .7; }
+.ziwei-relation-lines circle { vector-effect: non-scaling-stroke; stroke: #fffef9; stroke-width: 1.5; }
+.ziwei-relation-lines .trine-node { fill: #267166; }
+.ziwei-relation-lines .opposite-node { fill: #9d3426; }
 .ziwei-relation-legend { display: flex; justify-content: center; gap: 20px; padding: 7px 12px; background: #fffef9; border-top: 1px solid #c2cbc3; color: #415148; font-size: 12px; font-weight: 800; }
 .ziwei-relation-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .ziwei-relation-legend i { display: inline-block; width: 30px; height: 0; border-top: 3px solid #267166; }

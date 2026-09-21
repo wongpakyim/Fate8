@@ -6,6 +6,7 @@
 - Add clickable decadal limits and annual-year selection with palace overlays and Four Transformations.
 - Refine the compact Zi Wei grid to half width, remove visible A/B/C group labels, and unify the center background.
 - Add red natal, green decadal, blue annual, and orange palace transformations plus trine/opposite palace links.
+- Move palace names to the enlarged lower-center position, dock the four transformation scopes at the right edge, and redraw trines from inner-edge anchors as a closed triangle.
 - Add a shared-time Zi Wei domain adapter using San He presentation and Zhongzhou star placement.
 - Add `--mode ziwei`, `chart:ziwei`, `/api/ziwei`, JSON output, and fixed-width TXT output.
 - Load the Zi Wei client bundle only when its tab is opened.

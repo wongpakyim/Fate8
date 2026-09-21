@@ -16,29 +16,24 @@ const gridAreas: Record<string, string> = {
   寅: "4 / 1", 丑: "4 / 2", 子: "4 / 3", 亥: "4 / 4",
 };
 
-const gridPoints: Record<string, { x: number; y: number }> = {
-  巳: { x: 12.5, y: 12.5 }, 午: { x: 37.5, y: 12.5 }, 未: { x: 62.5, y: 12.5 }, 申: { x: 87.5, y: 12.5 },
-  辰: { x: 12.5, y: 37.5 }, 酉: { x: 87.5, y: 37.5 }, 卯: { x: 12.5, y: 62.5 }, 戌: { x: 87.5, y: 62.5 },
-  寅: { x: 12.5, y: 87.5 }, 丑: { x: 37.5, y: 87.5 }, 子: { x: 62.5, y: 87.5 }, 亥: { x: 87.5, y: 87.5 },
+const relationAnchorPoints: Record<string, { x: number; y: number }> = {
+  巳: { x: 25, y: 25 }, 午: { x: 37.5, y: 25 }, 未: { x: 62.5, y: 25 }, 申: { x: 75, y: 25 },
+  辰: { x: 25, y: 37.5 }, 酉: { x: 75, y: 37.5 }, 卯: { x: 25, y: 62.5 }, 戌: { x: 75, y: 62.5 },
+  寅: { x: 25, y: 75 }, 丑: { x: 37.5, y: 75 }, 子: { x: 62.5, y: 75 }, 亥: { x: 75, y: 75 },
 };
 
 const mutagenLabels = ["禄", "权", "科", "忌"];
 
-function starNames(stars: Array<{ name: string; brightness?: string }>, scopes: MutagenScope[]) {
+function starNames(stars: Array<{ name: string; brightness?: string }>) {
   if (!stars.length) return <span className="ziwei-empty">—</span>;
   return stars.map((star) => <span className="ziwei-star" key={star.name}>
     <b>{star.name}</b>
     {star.brightness && <small>{star.brightness}</small>}
-    {scopes.flatMap((scope) => scope.names.map((name, index) => name === star.name ? <em className={`ziwei-mutagen ${scope.tone}`} key={`${scope.tone}-${star.name}`}>{scope.prefix}{mutagenLabels[index]}</em> : []))}
   </span>);
 }
 
 function flowStars(stars: Array<{ name: string }>) {
   return stars.length ? stars.map((star) => star.name).join(" · ") : "—";
-}
-
-function mutagenItems(prefix: string, names: string[], tone: MutagenTone) {
-  return names.map((name, index) => <span className="ziwei-mutagen-item" key={`${tone}-${name}`}><em className={`ziwei-mutagen ${tone}`}>{prefix}{mutagenLabels[index]}</em><b>{name}</b></span>);
 }
 
 export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNextTime }: { calculation: FourPillarsCalculation; copied: boolean; onCopy: (text: string) => void; onPreviousTime: () => void; onNextTime: () => void }) {
@@ -82,38 +77,49 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
         <label>大限<select value={decadeIndex} onChange={(event) => chooseDecade(Number(event.target.value))}>{result.decades.map((decade) => <option key={`${decade.palaceIndex}-${decade.yearRange[0]}`} value={decade.listIndex}>{decade.ageRange.join("–")}岁 · {decade.heavenlyStem}{decade.earthlyBranch} · {decade.yearRange.join("–")}</option>)}</select></label>
         <label>流年<select value={selection.year.year} onChange={(event) => setYearValue(Number(event.target.value))}>{selection.decade.years.map((year) => <option key={year.year} value={year.year}>{year.year} · {year.age}岁 · {year.heavenlyStem}{year.earthlyBranch}</option>)}</select></label>
       </header>
-      <div className="ziwei-mutagen-band" aria-label="命限年宫四化">
-        <div className="ziwei-mutagen-group natal"><small>命四化</small>{mutagenItems("命", natalMutagens, "natal")}</div>
-        <div className="ziwei-mutagen-group decadal"><small>限四化</small>{mutagenItems("限", selection.decade.mutagen, "decadal")}</div>
-        <div className="ziwei-mutagen-group yearly"><small>年四化</small>{mutagenItems("年", selection.year.mutagen, "yearly")}</div>
-        <div className="ziwei-mutagen-group palace"><small>宫四化</small>{selectedPalace ? mutagenItems("宫", palaceMutagens, "palace") : <span className="ziwei-palace-prompt">点击宫位查看</span>}</div>
-      </div>
-
       <div className="ziwei-grid" aria-label="紫微斗数十二宫">
         {selectedPalace && relationPalaces && <svg className="ziwei-relation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={`${selectedPalace.name}宫三方四正连线`}>
-          {relationPalaces.trines.map((index) => {
-            const target = result.palaces.find((palace) => palace.index === index);
-            if (!target) return null;
-            return <line className="trine" key={`trine-${index}`} x1={gridPoints[selectedPalace.earthlyBranch].x} y1={gridPoints[selectedPalace.earthlyBranch].y} x2={gridPoints[target.earthlyBranch].x} y2={gridPoints[target.earthlyBranch].y} />;
-          })}
+          {(() => {
+            const trinePalaces = [selectedPalace, ...relationPalaces.trines.map((index) => result.palaces.find((palace) => palace.index === index))].filter(Boolean) as typeof result.palaces;
+            const points = trinePalaces.map((palace) => {
+              const point = relationAnchorPoints[palace.earthlyBranch];
+              return `${point.x},${point.y}`;
+            }).join(" ");
+            return <>
+              <polygon className="trine" points={points} />
+              {trinePalaces.map((palace) => {
+                const point = relationAnchorPoints[palace.earthlyBranch];
+                return <circle className="trine-node" key={`trine-node-${palace.index}`} cx={point.x} cy={point.y} r="0.8" />;
+              })}
+            </>;
+          })()}
           {(() => {
             const target = result.palaces.find((palace) => palace.index === relationPalaces.opposite);
-            return target ? <line className="opposite" x1={gridPoints[selectedPalace.earthlyBranch].x} y1={gridPoints[selectedPalace.earthlyBranch].y} x2={gridPoints[target.earthlyBranch].x} y2={gridPoints[target.earthlyBranch].y} /> : null;
+            if (!target) return null;
+            const sourcePoint = relationAnchorPoints[selectedPalace.earthlyBranch];
+            const targetPoint = relationAnchorPoints[target.earthlyBranch];
+            return <>
+              <line className="opposite" x1={sourcePoint.x} y1={sourcePoint.y} x2={targetPoint.x} y2={targetPoint.y} />
+              <circle className="opposite-node" cx={targetPoint.x} cy={targetPoint.y} r="0.8" />
+            </>;
           })()}
-          <circle cx={gridPoints[selectedPalace.earthlyBranch].x} cy={gridPoints[selectedPalace.earthlyBranch].y} r="1.15" />
         </svg>}
         {result.palaces.map((palace) => {
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
-          const trineRelated = relationPalaces?.trines.includes(palace.index);
-          const oppositeRelated = relationPalaces?.opposite === palace.index;
-          return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""} ${trineRelated ? "trine-related" : ""} ${oppositeRelated ? "opposite-related" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化与三方四正`}>
-            <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em></span>
-            <span className="ziwei-star-row major" aria-label="主曜"><span className="ziwei-stars">{starNames(palace.majorStars, scopes)}</span></span>
-            <span className="ziwei-star-row minor" aria-label="辅煞"><span className="ziwei-stars">{starNames(palace.minorStars, scopes)}</span></span>
-            <span className="ziwei-star-row adjective" aria-label="杂曜"><span className="ziwei-stars">{starNames(palace.adjectiveStars, scopes)}</span></span>
+          const palaceStarNames = new Set([...palace.majorStars, ...palace.minorStars, ...palace.adjectiveStars].map((star) => star.name));
+          return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化与三方四正`}>
+            <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span><em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em></span>
+            <span className="ziwei-palace-mutagens" aria-label="本宫命限年宫四化">
+              {scopes.map((scope) => <span className={`ziwei-palace-mutagen-slot ${scope.tone}`} key={scope.tone}>
+                {scope.names.map((name, index) => palaceStarNames.has(name) ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${name}`} key={`${scope.tone}-${name}`}>{scope.prefix}{mutagenLabels[index]}</em> : null)}
+              </span>)}
+            </span>
+            <span className="ziwei-star-row major" aria-label="主曜"><span className="ziwei-stars">{starNames(palace.majorStars)}</span></span>
+            <span className="ziwei-star-row minor" aria-label="辅煞"><span className="ziwei-stars">{starNames(palace.minorStars)}</span></span>
+            <span className="ziwei-star-row adjective" aria-label="杂曜"><span className="ziwei-stars">{starNames(palace.adjectiveStars)}</span></span>
             <span className="ziwei-palace-layers"><span className="ziwei-layer-line"><b>限·{selection.decade.palaceNames[palace.index]}</b><span>{flowStars(selection.decade.stars[palace.index])}</span></span><span className="ziwei-layer-line"><b>年·{selection.year.palaceNames[palace.index]}</b><span>{flowStars(selection.year.stars[palace.index])}</span></span></span>
-            <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><span>{palace.changsheng12}</span></span>
+            <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><span>{palace.changsheng12}</span></span>
           </button>;
         })}
         <div className="ziwei-center" style={{ gridArea: "2 / 2 / 4 / 4" }} aria-label={`八字 ${result.source.fourPillars}`}>
