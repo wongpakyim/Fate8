@@ -25,7 +25,7 @@ const relationAnchorPoints: Record<string, { x: number; y: number }> = {
 const mutagenLabels = ["禄", "权", "科", "忌"];
 
 function starNames(stars: Array<{ name: string }>, scopes: MutagenScope[]) {
-  if (!stars.length) return <span className="ziwei-empty">—</span>;
+  if (!stars.length) return null;
   return stars.map((star) => {
     const transformations = scopes.flatMap((scope) => scope.names.map((name, index) => name === star.name
       ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${star.name}`} key={`${scope.tone}-${star.name}`}>{scope.prefix}{mutagenLabels[index]}</em>
@@ -113,11 +113,13 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
           return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化与三方四正`}>
-            <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span><em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em></span>
-            <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
-              <span className="ziwei-star-column major" aria-label="甲级星">{starNames(palace.majorStars, scopes)}</span>
-              <span className="ziwei-star-column minor" aria-label="乙级星">{starNames(palace.minorStars, scopes)}</span>
-              <span className="ziwei-star-column adjective" aria-label="丙级星">{starNames(palace.adjectiveStars, scopes)}</span>
+            <span className="ziwei-palace-main">
+              <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span>{(palace.isOriginalPalace || palace.isBodyPalace) && <em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em>}</span>
+              <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
+                <span className="ziwei-star-column major" aria-label="甲级星">{starNames(palace.majorStars, scopes)}</span>
+                <span className="ziwei-star-column minor" aria-label="乙级星">{starNames(palace.minorStars, scopes)}</span>
+                <span className="ziwei-star-column adjective" aria-label="丙级星">{starNames(palace.adjectiveStars, scopes)}</span>
+              </span>
             </span>
             <span className="ziwei-palace-layers"><span className="ziwei-layer-line"><b>限·{selection.decade.palaceNames[palace.index]}</b><span>{flowStars(selection.decade.stars[palace.index])}</span></span><span className="ziwei-layer-line"><b>年·{selection.year.palaceNames[palace.index]}</b><span>{flowStars(selection.year.stars[palace.index])}</span></span></span>
             <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><span>{palace.changsheng12}</span></span>
