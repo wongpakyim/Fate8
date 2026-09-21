@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 — in development
+## 0.2.0 — 2026-09-22
 
 - Add a dedicated Zi Wei Dou Shu Web tab with a compact twelve-palace ring.
 - Add clickable decadal limits and annual-year selection with palace overlays and Four Transformations.
