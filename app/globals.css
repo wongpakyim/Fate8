@@ -330,7 +330,7 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-palace-layers b { color: #8a3b2c; white-space: nowrap; }
 .ziwei-palace-layers span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ziwei-palace-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; color: #354d40; font-size: 12px; font-weight: 800; }
-.ziwei-center { z-index: 1; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, rgba(255,255,250,.97), rgba(224,233,223,.94)), url('/ink-mountains.png') center/cover; border: 1px solid #708279; }
+.ziwei-center { z-index: 1; display: grid; place-items: center; background: #fffef9; border: 1px solid #708279; }
 .ziwei-center > div { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 3vw, 42px); }
 .ziwei-center p { display: flex; flex-direction: column; margin: 0; text-align: center; }
 .ziwei-center strong, .ziwei-center b { font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(34px, 4vw, 58px); line-height: 1.08; font-weight: 900; }
@@ -349,3 +349,47 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
   .ziwei-profile { grid-column: auto; }
   .ziwei-flow-summary { grid-template-columns: 1fr; }
 }
+
+/* Zi Wei compact four-transformations refinement */
+.ziwei-card { width: 50%; min-width: 640px; margin-inline: auto; }
+.ziwei-star-row { display: block; }
+.ziwei-star-row > .ziwei-stars { display: flex; flex-wrap: wrap; gap: 2px 7px; min-width: 0; }
+.ziwei-palace.palace-selected { z-index: 3; outline: 3px solid #d66a14; outline-offset: -3px; }
+.ziwei-mutagen-band { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #a4afa7; border-bottom: 1px solid #87998c; }
+.ziwei-mutagen-group { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 8px; min-height: 42px; padding: 7px 10px; background: #faf9f1; }
+.ziwei-mutagen-group > small { width: 44px; color: #495a50; font-size: 12px; font-weight: 900; }
+.ziwei-mutagen-item { display: inline-flex; align-items: center; gap: 3px; color: #25362d; font-size: 12px; }
+.ziwei-mutagen-item > b { font-size: 13px; }
+.ziwei-mutagen { display: inline-block; padding: 1px 3px; border-radius: 2px; color: #fff; font-size: 10px; font-style: normal; font-weight: 900; line-height: 16px; white-space: nowrap; }
+.ziwei-mutagen.natal { background: #b3261e; }
+.ziwei-mutagen.decadal { background: #16784b; }
+.ziwei-mutagen.yearly { background: #1769aa; }
+.ziwei-mutagen.palace { background: #d66a14; }
+.ziwei-star .ziwei-mutagen { margin-left: 2px; color: #fff; font-size: 9px; line-height: 14px; }
+.ziwei-star .ziwei-mutagen.natal { background: #b3261e; }
+.ziwei-star .ziwei-mutagen.decadal { background: #16784b; }
+.ziwei-star .ziwei-mutagen.yearly { background: #1769aa; }
+.ziwei-star .ziwei-mutagen.palace { background: #d66a14; }
+.ziwei-palace-prompt { color: #8b6a4d; font-size: 12px; font-weight: 800; }
+
+@media (max-width: 980px) {
+  .ziwei-card { width: 100%; min-width: 0; overflow-x: auto; }
+  .ziwei-grid { min-width: 680px; }
+}
+
+@media (max-width: 680px) {
+  .ziwei-mutagen-band { grid-template-columns: 1fr; min-width: 680px; }
+}
+/* Zi Wei three-harmony and opposite connections */
+.ziwei-grid { position: relative; }
+.ziwei-relation-lines { position: absolute; z-index: 5; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); overflow: visible; pointer-events: none; }
+.ziwei-relation-lines line { vector-effect: non-scaling-stroke; fill: none; stroke-linecap: round; }
+.ziwei-relation-lines .trine { stroke: #267166; stroke-width: 3; opacity: .68; }
+.ziwei-relation-lines .opposite { stroke: #9d3426; stroke-width: 3; stroke-dasharray: 8 6; opacity: .72; }
+.ziwei-relation-lines circle { vector-effect: non-scaling-stroke; fill: #d66a14; stroke: #fffef9; stroke-width: 2; }
+.ziwei-palace.trine-related { box-shadow: inset 0 0 0 2px #267166; }
+.ziwei-palace.opposite-related { box-shadow: inset 0 0 0 2px #9d3426; }
+.ziwei-relation-legend { display: flex; justify-content: center; gap: 20px; padding: 7px 12px; background: #fffef9; border-top: 1px solid #c2cbc3; color: #415148; font-size: 12px; font-weight: 800; }
+.ziwei-relation-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.ziwei-relation-legend i { display: inline-block; width: 30px; height: 0; border-top: 3px solid #267166; }
+.ziwei-relation-legend i.opposite { border-top-color: #9d3426; border-top-style: dashed; }

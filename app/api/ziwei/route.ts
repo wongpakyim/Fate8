@@ -28,7 +28,7 @@ function calculate(input: Record<string, unknown>) {
 
 function respond(result: ReturnType<typeof calculate>, input: Record<string, unknown>) {
   if (input.format === "text" || input.format === "file") {
-    const text = formatZiWeiText(result, input.decadeIndex == null ? undefined : Number(input.decadeIndex), input.year == null ? undefined : Number(input.year));
+    const text = formatZiWeiText(result, input.decadeIndex == null ? undefined : Number(input.decadeIndex), input.year == null ? undefined : Number(input.year), input.palaceIndex == null ? undefined : Number(input.palaceIndex));
     return new Response(text + "\n", { headers: { ...corsHeaders, "Content-Type": "text/plain; charset=utf-8", ...(input.format === "file" ? { "Content-Disposition": "attachment; filename=ziwei-result.txt" } : {}) } });
   }
   return Response.json(result, { headers: corsHeaders });

@@ -23,7 +23,7 @@ Fate8 is a modular Chinese metaphysics charting project built on one shared cale
 | Reverse lookup | Searches real Gregorian matches for a Four Pillars combination between CE 1000 and 2100 |
 | Da Liu Ren | Middle-qi month-general switching, manual month general, twelve-palace heaven plate, heavenly generals, Shen Sha, right-to-left Four Lessons, and Three Transmissions |
 | Chai-Bu Qi Men | Solar-term setup, Fu Tou, three yuan/hou, yin/yang nine configurations, Xun Shou, Chief Star/Door, and a full nine-palace chart with growth stages |
-| Zi Wei Dou Shu | San He twelve-palace presentation, Zhongzhou star placement, A/B/C star groups, decadal limits, annual years, and Four Transformations |
+| Zi Wei Dou Shu | San He twelve-palace presentation, Zhongzhou star placement, major/supporting stars, time-layer transformations, and trine/opposite links |
 | Integration | Separate Web tabs, Node/ESM, CLI, HTTP API, JSON, formatted TXT, and downloadable files |
 
 The Web UI uses a modern Chinese ink-landscape visual language. BaZi, reverse lookup, Liu Ren, Qi Men, and Zi Wei are separated into dedicated tabs. Input can collapse after chart generation or through the Suspend control, and every detailed chart can copy its formatted text version.

@@ -14,16 +14,24 @@ Fate8 `v0.2.0` 新增紫微斗数领域模块。它与八字、六壬、奇门�
 
 - 盘面框架采用三合派十二宫表达。
 - 星曜位置调用 `iztro` 的中州派算法配置。
-- `甲级·主曜` 对应 `majorStars`。
-- `乙级·辅煞` 对应 `minorStars`。
-- `丙级·杂曜` 对应 `adjectiveStars`。
+- JSON 内部仍以 `majorStars`、`minorStars`、`adjectiveStars` 保留主曜、辅煞与杂曜分组。
+- Web 宫格不重复显示“甲级、乙级、丙级”标题，只显示具体星曜。
 
-这些名称是 Fate8 的展示分组；星曜安置、亮度与四化数据均由中州派算法结果提供。
+星曜安置、亮度与四化数据均由中州派算法结果提供。
+
+## 四化与三方四正
+
+- 命四化取出生年干，红色显示。
+- 限四化取所选大限干，绿色显示。
+- 年四化取所选流年干，蓝色显示。
+- 宫四化取所点击宫位天干，橙色显示。
+- 点击宫位后，同一三合局的另外两宫使用实线连接，正对宫使用虚线连接。
+- 三方四正关系保存在领域 JSON 的 `palace.relations`，Web 只负责绘线。
 
 ## 模块边界
 
 - `lib/zi-wei.mjs`：纯计算适配、序列化 JSON、大限/流年选择及 TXT 环盘。
-- `app/components/zi-wei-panel.tsx`：十二宫界面、大限与流年交互。
+- `app/components/zi-wei-panel.tsx`：紧凑十二宫界面、大限流年、四色四化与三方四正交互。
 - `app/api/ziwei/route.ts`：JSON、TXT 和下载文件接口。
 - `scripts/bazi.mjs --mode ziwei`：命令行简排。
 

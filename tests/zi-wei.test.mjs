@@ -21,6 +21,11 @@ test("Zi Wei consumes the shared corrected time and returns twelve serializable 
   assert.equal(result.source.trueSolarTime, calculation.time.trueSolar);
   assert.equal(result.source.fourPillars, "壬申 癸卯 庚寅 癸未");
   assert.equal(result.palaces.length, 12);
+  assert.deepEqual(result.transformations.natal.stars.map((item) => `${item.name}${item.mutagen}`), ["天梁禄", "紫微权", "左辅科", "武曲忌"]);
+  assert.ok(result.palaces.every((palace) => palace.palaceTransformations.length === 4));
+  const yinPalace = result.palaces.find((palace) => palace.earthlyBranch === "寅");
+  assert.deepEqual(yinPalace.relations.trines.map((index) => result.palaces[index].earthlyBranch), ["午", "戌"]);
+  assert.equal(result.palaces[yinPalace.relations.opposite].earthlyBranch, "申");
   assert.equal(result.palaces.reduce((sum, palace) => sum + palace.majorStars.length, 0), 14);
   assert.equal(result.decades.length, 12);
   assert.ok(result.decades.every((decade) => decade.years.length === 10));
@@ -36,6 +41,8 @@ test("Zi Wei defaults to the requested year and keeps decade/year overlays align
   assert.equal(selection.year.palaceNames.length, 12);
   assert.equal(selection.decade.stars.length, 12);
   assert.equal(selection.year.stars.length, 12);
+  assert.deepEqual(selection.decade.mutagen, ["巨门", "太阳", "文曲", "文昌"]);
+  assert.deepEqual(selection.year.mutagen, ["天同", "天机", "文昌", "廉贞"]);
 });
 
 test("Zi Wei keeps the shared 23-hour and midnight day-boundary pillars", () => {
@@ -48,7 +55,7 @@ test("Zi Wei keeps the shared 23-hour and midnight day-boundary pillars", () => 
 });
 test("Zi Wei text mode is a fixed-width twelve-palace ring with the four pillars in the center", () => {
   const result = calculateZiWei(calculation, { referenceYear: 2026 });
-  const text = formatZiWeiText(result);
+  const text = formatZiWeiText(result, undefined, undefined, 0);
   const ring = text.slice(text.indexOf("┌")).split("\n");
   assert.equal(new Set(ring.map(textDisplayWidth)).size, 1);
   assert.match(text, /紫微斗数 · 三合派（中州派安星）/);
@@ -56,6 +63,11 @@ test("Zi Wei text mode is a fixed-width twelve-palace ring with the four pillars
   for (const pillar of calculation.fourPillars.text.split(" ")) assert.match(text, new RegExp(pillar));
   assert.match(text, /大限 35–44岁 2026–2035/);
   assert.match(text, /流年 2026/);
+  assert.match(text, /命禄:天梁.*命权:紫微.*命科:左辅.*命忌:武曲/);
+  assert.match(text, /限禄:巨门.*限权:太阳.*限科:文曲.*限忌:文昌/);
+  assert.match(text, /年禄:天同.*年权:天机.*年科:文昌.*年忌:廉贞/);
+  assert.match(text, /宫禄:天梁.*宫权:紫微.*宫科:左辅.*宫忌:武曲/);
+  assert.doesNotMatch(text, /│[甲乙丙] /);
 });
 
 test("CLI exposes Zi Wei JSON and text modes", () => {
