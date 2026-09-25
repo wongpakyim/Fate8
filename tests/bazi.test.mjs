@@ -229,6 +229,17 @@ test("allows a manual month-general override without changing shared time", () =
   assert.equal(liuRen.source.standardTime, calculation.time.standard);
 });
 
+test("uses Bie-Ze before Mao-Xing for the unprepared 2026-09-24 Wei-hour lessons", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-09-24 14:00", longitude: 120 }, { solarTimeMode: "none" });
+  const liuRen = calculateLiuRen(calculation);
+
+  assert.equal(calculation.fourPillars.text, "丙午 丁酉 辛丑 乙未");
+  assert.deepEqual(liuRen.fourLessons.map((lesson) => lesson.upper.name), ["未", "辰", "戌", "未"]);
+  assert.equal(new Set(liuRen.fourLessons.map((lesson) => lesson.upper.index)).size, 3);
+  assert.equal(liuRen.threeTransmissions.method, "别责");
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["巳", "未", "未"]);
+});
+
 test("separates the upper and earth-palace generals in the 2026-08-24 noon lessons", () => {
   const calculation = calculateFourPillars({ solarTime: "2026-08-24 12:00", longitude: 120 }, { solarTimeMode: "none" });
   const liuRen = calculateLiuRen(calculation);

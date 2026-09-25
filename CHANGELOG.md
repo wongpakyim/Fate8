@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fix Liu Ren lesson completeness counting to use distinct upper gods, so unprepared three-lesson plates choose Bie-Ze before Mao-Xing; `2026-09-24 14:00` now yields `巳未未`.
+- Keep two-lesson Ba-Zhuan plates from incorrectly entering the remote-overcoming branch.
+
 ## 0.2.0 — 2026-09-22
 
 - Add a dedicated Zi Wei Dou Shu Web tab with a compact twelve-palace ring.
