@@ -2,8 +2,14 @@
 
 ## Unreleased
 
+## 0.2.1 — 2026-09-26
+
 - Fix Liu Ren lesson completeness counting to use distinct upper gods, so unprepared three-lesson plates choose Bie-Ze before Mao-Xing; `2026-09-24 14:00` now yields `巳未未`.
-- Keep two-lesson Ba-Zhuan plates from incorrectly entering the remote-overcoming branch.
+- Keep two-lesson Ba-Zhuan plates from incorrectly entering the remote-overcoming branch; `2026-10-07 00:00` now yields `申午午`.
+- Expose lesson completeness and direct-control routing separately, preserving direct overcoming for complete or unprepared lessons; `2026-10-08 00:00` yields `未亥卯`.
+- Fix Fu-Yin self-punishment routing by switching from the initial stem/branch side to the opposite side, then using the middle transmission's clash if it self-punishes again; `2026-10-08 08:00` yields `辰卯子`.
+- Add mutually exclusive natal, decadal, and yearly Zi Wei relation-line modes, defaulting to the natal life palace.
+- Add Qi Men hidden stems to the reusable result, text chart, and Web palace view using the door-carried hidden-stem rule, with a compact corner-and-center palace layout.
 
 ## 0.2.0 — 2026-09-22
 

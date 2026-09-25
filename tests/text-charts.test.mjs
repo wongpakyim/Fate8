@@ -58,6 +58,7 @@ test("Qi Men text is a visual 3-by-3 palace grid with full palace data", () => {
   assert.equal((grid.match(/天盘长生 /g) || []).length, 8);
   assert.equal((grid.match(/地盘长生 /g) || []).length, 8);
   assert.equal((grid.match(/十干克应 /g) || []).length, 8);
+  assert.equal((grid.match(/隐干 /g) || []).length, 8);
   assert.match(report, /奇门九宫/);
 });
 

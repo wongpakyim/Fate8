@@ -4,7 +4,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { calculateFourPillars } from "../lib/four-pillars.mjs";
 import { textDisplayWidth } from "../lib/text-layout.mjs";
-import { calculateZiWei, formatZiWeiText, getZiWeiSelection } from "../lib/zi-wei.mjs";
+import { calculateZiWei, formatZiWeiText, getZiWeiRelationPalaceIndex, getZiWeiSelection } from "../lib/zi-wei.mjs";
 
 const calculation = calculateFourPillars({
   solarTime: "1992-03-15 14:30",
@@ -43,6 +43,21 @@ test("Zi Wei defaults to the requested year and keeps decade/year overlays align
   assert.equal(selection.year.stars.length, 12);
   assert.deepEqual(selection.decade.mutagen, ["巨门", "太阳", "文曲", "文昌"]);
   assert.deepEqual(selection.year.mutagen, ["天同", "天机", "文昌", "廉贞"]);
+});
+
+test("Zi Wei resolves natal, decadal, and yearly relation-line palaces independently", () => {
+  const result = calculateZiWei(calculation, { referenceYear: 2026 });
+  const selection = getZiWeiSelection(result);
+  const natalIndex = getZiWeiRelationPalaceIndex(result, selection, "natal");
+  const decadalIndex = getZiWeiRelationPalaceIndex(result, selection, "decadal");
+  const yearlyIndex = getZiWeiRelationPalaceIndex(result, selection, "yearly");
+
+  assert.equal(result.palaces[natalIndex].name, "命宫");
+  assert.equal(selection.decade.palaceNames[decadalIndex], "命宫");
+  assert.equal(selection.year.palaceNames[yearlyIndex], "命宫");
+  assert.equal(decadalIndex, selection.decade.palaceIndex);
+  assert.notEqual(natalIndex, decadalIndex);
+  assert.notEqual(decadalIndex, yearlyIndex);
 });
 
 test("Zi Wei keeps the shared 23-hour and midnight day-boundary pillars", () => {

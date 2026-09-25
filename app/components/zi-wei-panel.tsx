@@ -2,13 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { calculateFourPillars } from "@/lib/four-pillars.mjs";
-import { calculateZiWei, formatZiWeiText, getZiWeiSelection } from "@/lib/zi-wei.mjs";
+import { calculateZiWei, formatZiWeiText, getZiWeiRelationPalaceIndex, getZiWeiSelection } from "@/lib/zi-wei.mjs";
 import { ChartTimeControls } from "./chart-time-controls";
 import { elementClass } from "./five-elements";
 
 type FourPillarsCalculation = ReturnType<typeof calculateFourPillars>;
 type MutagenTone = "natal" | "decadal" | "yearly" | "palace";
 type MutagenScope = { prefix: string; tone: MutagenTone; names: string[] };
+type RelationMode = "natal" | "decadal" | "yearly";
 
 const gridAreas: Record<string, string> = {
   巳: "1 / 1", 午: "1 / 2", 未: "1 / 3", 申: "1 / 4",
@@ -23,6 +24,11 @@ const relationAnchorPoints: Record<string, { x: number; y: number }> = {
 };
 
 const mutagenLabels = ["禄", "权", "科", "忌"];
+const relationModeOptions: Array<{ value: RelationMode; label: string }> = [
+  { value: "natal", label: "本命" },
+  { value: "decadal", label: "大限" },
+  { value: "yearly", label: "流年" },
+];
 
 function starNames(stars: Array<{ name: string }>, scopes: MutagenScope[]) {
   if (!stars.length) return null;
@@ -46,10 +52,12 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
   const [decadeIndex, setDecadeIndex] = useState(result.defaultSelection.decadeIndex);
   const [yearValue, setYearValue] = useState(result.defaultSelection.year);
   const [selectedPalaceIndex, setSelectedPalaceIndex] = useState<number | null>(null);
+  const [relationMode, setRelationMode] = useState<RelationMode>("natal");
   const selection = useMemo(() => getZiWeiSelection(result, decadeIndex, yearValue), [result, decadeIndex, yearValue]);
   const selectedPalace = result.palaces.find((palace) => palace.index === selectedPalaceIndex) || null;
-
-  const relationPalaces = selectedPalace?.relations || null;
+  const relationSourceIndex = getZiWeiRelationPalaceIndex(result, selection, relationMode);
+  const relationSourcePalace = result.palaces.find((palace) => palace.index === relationSourceIndex) || null;
+  const relationPalaces = relationSourcePalace?.relations || null;
 
   const natalMutagens = result.transformations.natal.stars.map((item) => item.name);
   const palaceMutagens = selectedPalace?.palaceTransformations.map((item) => item.name) || [];
@@ -78,14 +86,20 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
 
     <article className="ziwei-card">
       <header className="ziwei-toolbar">
-        <div className="ziwei-profile"><strong>{result.profile.fiveElementsClass}</strong><span>命主 {result.profile.soul}</span><span>身主 {result.profile.body}</span><span>{result.source.gender}命</span></div>
+        <div className="ziwei-toolbar-primary">
+          <div className="ziwei-profile"><strong>{result.profile.fiveElementsClass}</strong><span>命主 {result.profile.soul}</span><span>身主 {result.profile.body}</span><span>{result.source.gender}命</span></div>
+          <fieldset className="ziwei-relation-mode">
+            <legend>三方四正</legend>
+            {relationModeOptions.map((option) => <label className={relationMode === option.value ? "selected" : ""} key={option.value}><input type="radio" name="ziwei-relation-mode" value={option.value} checked={relationMode === option.value} onChange={() => setRelationMode(option.value)} /><span>{option.label}</span></label>)}
+          </fieldset>
+        </div>
         <label>大限<select value={decadeIndex} onChange={(event) => chooseDecade(Number(event.target.value))}>{result.decades.map((decade) => <option key={`${decade.palaceIndex}-${decade.yearRange[0]}`} value={decade.listIndex}>{decade.ageRange.join("–")}岁 · {decade.heavenlyStem}{decade.earthlyBranch} · {decade.yearRange.join("–")}</option>)}</select></label>
         <label>流年<select value={selection.year.year} onChange={(event) => setYearValue(Number(event.target.value))}>{selection.decade.years.map((year) => <option key={year.year} value={year.year}>{year.year} · {year.age}岁 · {year.heavenlyStem}{year.earthlyBranch}</option>)}</select></label>
       </header>
       <div className="ziwei-grid" aria-label="紫微斗数十二宫">
-        {selectedPalace && relationPalaces && <svg className="ziwei-relation-lines" viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={`${selectedPalace.name}宫三方四正连线`}>
+        {relationSourcePalace && relationPalaces && <svg className={`ziwei-relation-lines mode-${relationMode}`} viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label={`${relationModeOptions.find((option) => option.value === relationMode)?.label}${relationSourcePalace.name}三方四正连线`}>
           {(() => {
-            const trinePalaces = [selectedPalace, ...relationPalaces.trines.map((index) => result.palaces.find((palace) => palace.index === index))].filter(Boolean) as typeof result.palaces;
+            const trinePalaces = [relationSourcePalace, ...relationPalaces.trines.map((index) => result.palaces.find((palace) => palace.index === index))].filter(Boolean) as typeof result.palaces;
             const points = trinePalaces.map((palace) => {
               const point = relationAnchorPoints[palace.earthlyBranch];
               return `${point.x},${point.y}`;
@@ -101,7 +115,7 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
           {(() => {
             const target = result.palaces.find((palace) => palace.index === relationPalaces.opposite);
             if (!target) return null;
-            const sourcePoint = relationAnchorPoints[selectedPalace.earthlyBranch];
+            const sourcePoint = relationAnchorPoints[relationSourcePalace.earthlyBranch];
             const targetPoint = relationAnchorPoints[target.earthlyBranch];
             return <>
               <line className="opposite" x1={sourcePoint.x} y1={sourcePoint.y} x2={targetPoint.x} y2={targetPoint.y} />
@@ -112,7 +126,7 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
         {result.palaces.map((palace) => {
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
-          return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化与三方四正`}>
+          return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化`}>
             <span className="ziwei-palace-main">
               <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span>{(palace.isOriginalPalace || palace.isBodyPalace) && <em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em>}</span>
               <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
@@ -130,8 +144,8 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
           <div>{pillars.map((pillar, index) => <p key={`${pillar}-${index}`}><strong className={elementClass(pillar[0])}>{pillar[0]}</strong><b className={elementClass(pillar[1])}>{pillar[1]}</b></p>)}</div>
         </div>
       </div>
-      <div className="ziwei-relation-legend"><span><i className="trine" />三方实线</span><span><i className="opposite" />对宫虚线</span></div>
-      <p className="ziwei-note">大限、流年在上方选择；点击十二宫切换橙色宫干四化及三方四正连线。红、绿、蓝、橙依次表示命、限、年、宫四化。</p>
+      <div className="ziwei-relation-legend"><strong>当前：{relationModeOptions.find((option) => option.value === relationMode)?.label}</strong><span><i className="trine" />三方实线</span><span><i className="opposite" />对宫虚线</span></div>
+      <p className="ziwei-note">三方四正可切换本命、大限或流年，默认显示本命命宫；点击十二宫只切换橙色宫干四化。红、绿、蓝、橙依次表示命、限、年、宫四化。</p>
     </article>
   </section>;
 }

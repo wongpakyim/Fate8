@@ -2,7 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "fate8",
   "account_id": "9fb8571ccfd83d53a215d78dc1a0e49a",
-  "compatibility_date": "2026-08-27",
+  "compatibility_date": "2026-05-22",
   "compatibility_flags": [
     "nodejs_compat"
   ],

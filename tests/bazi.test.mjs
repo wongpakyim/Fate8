@@ -240,6 +240,56 @@ test("uses Bie-Ze before Mao-Xing for the unprepared 2026-09-24 Wei-hour lessons
   assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["巳", "未", "未"]);
 });
 
+test("uses Ba-Zhuan without remote overcoming for the 2026-10-07 Zi-hour lessons", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-10-07 00:00", longitude: 120 }, { solarTimeMode: "none" });
+  const liuRen = calculateLiuRen(calculation);
+
+  assert.equal(calculation.fourPillars.text, "丙午 丁酉 甲寅 甲子");
+  assert.deepEqual(liuRen.fourLessons.map((lesson) => lesson.upper.name), ["午", "戌", "午", "戌"]);
+  assert.equal(new Set(liuRen.fourLessons.map((lesson) => lesson.upper.index)).size, 2);
+  assert.equal(liuRen.threeTransmissions.lessonPattern, "两课");
+  assert.equal(liuRen.threeTransmissions.method, "八专");
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["申", "午", "午"]);
+});
+
+test("keeps direct overcoming ahead of completeness routing for the 2026-10-08 Zi-hour lessons", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-10-08 00:00", longitude: 113.267 }, { solarTimeMode: "apparent", dayBoundary: 23 });
+  const liuRen = calculateLiuRen(calculation);
+
+  assert.equal(calculation.fourPillars.text, "丙午 丁酉 乙卯 丙子");
+  assert.deepEqual(liuRen.fourLessons.map((lesson) => lesson.upper.name), ["申", "子", "未", "亥"]);
+  assert.deepEqual(liuRen.fourLessons.map((lesson) => lesson.relation), ["上克下", "生泄", "下贼上", "下贼上"]);
+  assert.equal(liuRen.threeTransmissions.lessonCount, 4);
+  assert.equal(liuRen.threeTransmissions.lessonPattern, "四课全");
+  assert.equal(liuRen.threeTransmissions.controlRelation, "下贼上");
+  assert.equal(liuRen.threeTransmissions.method, "涉害");
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["未", "亥", "卯"]);
+});
+
+test("switches from the stem side to the branch side after a self-punishing Fu-Yin initial", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-10-08 08:00", longitude: 120 }, { solarTimeMode: "none", dayBoundary: 23 });
+  const liuRen = calculateLiuRen(calculation);
+
+  assert.equal(calculation.fourPillars.text, "丙午 丁酉 乙卯 庚辰");
+  assert.equal(liuRen.monthGeneral.branch, "辰");
+  assert.equal(liuRen.divinationTime.branch.name, "辰");
+  assert.equal(liuRen.threeTransmissions.lessonPattern, "两课");
+  assert.equal(liuRen.threeTransmissions.controlRelation, "下贼上");
+  assert.equal(liuRen.threeTransmissions.method, "伏吟·重审");
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["辰", "卯", "子"]);
+});
+
+test("uses the clash when the Fu-Yin middle transmission is also self-punishing", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-11-07 06:00", longitude: 120 }, { solarTimeMode: "none", dayBoundary: 23 });
+  const liuRen = calculateLiuRen(calculation);
+
+  assert.equal(calculation.fourPillars.day.value, "乙酉");
+  assert.equal(liuRen.monthGeneral.branch, "卯");
+  assert.equal(liuRen.divinationTime.branch.name, "卯");
+  assert.equal(liuRen.threeTransmissions.method, "伏吟·重审");
+  assert.deepEqual(liuRen.threeTransmissions.items.map((item) => item.branch.name), ["辰", "酉", "卯"]);
+});
+
 test("separates the upper and earth-palace generals in the 2026-08-24 noon lessons", () => {
   const calculation = calculateFourPillars({ solarTime: "2026-08-24 12:00", longitude: 120 }, { solarTimeMode: "none" });
   const liuRen = calculateLiuRen(calculation);
@@ -285,6 +335,12 @@ test("builds Chai-Bu rotating Qi Men from the shared four-pillar result", () => 
   assert.equal(qiMen.xun.start, "甲戌");
   assert.equal(qiMen.palaces.length, 9);
   assert.deepEqual(new Set(qiMen.palaces.map((palace) => palace.earthInstrument)), new Set(["戊", "己", "庚", "辛", "壬", "癸", "丁", "丙", "乙"]));
+  const originalDoorPalaces = { 休门: 1, 生门: 8, 伤门: 3, 杜门: 4, 景门: 9, 死门: 2, 惊门: 7, 开门: 6 };
+  const earthInstrumentByPalace = Object.fromEntries(qiMen.palaces.map((palace) => [palace.number, palace.earthInstrument]));
+  for (const palace of qiMen.palaces.filter((item) => item.number !== 5)) {
+    assert.equal(palace.hiddenInstrument, earthInstrumentByPalace[originalDoorPalaces[palace.door]]);
+  }
+  assert.equal(qiMen.palaces.find((palace) => palace.number === 5).hiddenInstrument, null);
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.heavenGrowth.length >= palace.branches.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.earthGrowth.length === palace.branches.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.stemResponses.length === palace.heavenInstruments.length));
@@ -295,6 +351,19 @@ test("builds Chai-Bu rotating Qi Men from the shared four-pillar result", () => 
   assert.match(formatQiMenText(qiMen), /拆补定局：己丑符头 · 下元 · 阳遁4局/);
   assert.match(formatQiMenText(qiMen), /天盘长生/);
   assert.match(formatQiMenText(qiMen), /地盘长生/);
+  assert.match(formatQiMenText(qiMen), /隐干/);
+});
+
+test("carries each door's original-palace earth instrument as its hidden stem", () => {
+  const calculation = calculateFourPillars({ solarTime: "2026-09-02 08:00", longitude: 120 }, { solarTimeMode: "none" });
+  const qiMen = calculateQiMen(calculation);
+  const xunPalace = qiMen.palaces.find((palace) => palace.number === 4);
+
+  assert.equal(qiMen.ju.label, "阴遁1局");
+  assert.equal(xunPalace.door, "景门");
+  assert.equal(xunPalace.earthInstrument, "丁");
+  assert.equal(qiMen.palaces.find((palace) => palace.number === 9).earthInstrument, "己");
+  assert.equal(xunPalace.hiddenInstrument, "己");
 });
 
 test("builds one public core for scripts and a serializable simple chart for Web", () => {
