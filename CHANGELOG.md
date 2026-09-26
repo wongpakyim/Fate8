@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.2.2 — 2026-09-27
+
+- Add twelve-growth states for Qi Men hidden stems and center-palace lodged stems, and simplify palace labels around the compact symbol stack.
+- Render Zi Wei palace stems and branches as a centered translucent foreground layer and use color-only Four Transformation badges.
+- Align the Zi Wei controls, palace board, relation legend, and note to one compact width while enlarging the palace grid and star text for readability.
+
 ## 0.2.1 — 2026-09-26
 
 - Fix Liu Ren lesson completeness counting to use distinct upper gods, so unprepared three-lesson plates choose Bie-Ze before Mao-Xing; `2026-09-24 14:00` now yields `巳未未`.

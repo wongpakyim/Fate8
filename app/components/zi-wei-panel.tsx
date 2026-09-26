@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { calculateFourPillars } from "@/lib/four-pillars.mjs";
 import { calculateZiWei, formatZiWeiText, getZiWeiRelationPalaceIndex, getZiWeiSelection } from "@/lib/zi-wei.mjs";
 import { ChartTimeControls } from "./chart-time-controls";
@@ -34,7 +34,7 @@ function starNames(stars: Array<{ name: string }>, scopes: MutagenScope[]) {
   if (!stars.length) return null;
   return stars.map((star) => {
     const transformations = scopes.flatMap((scope) => scope.names.map((name, index) => name === star.name
-      ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${star.name}`} key={`${scope.tone}-${star.name}`}>{scope.prefix}{mutagenLabels[index]}</em>
+      ? <em className={`ziwei-mutagen ${scope.tone}`} title={`${scope.prefix}${mutagenLabels[index]}：${star.name}`} key={`${scope.tone}-${star.name}`}>{mutagenLabels[index]}</em>
       : null).filter(Boolean));
     return <span className="ziwei-star" key={star.name}>
       <b>{star.name}</b>
@@ -126,9 +126,9 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
         {result.palaces.map((palace) => {
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
-          return <button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} key={palace.index} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化`}>
+          return <Fragment key={palace.index}><button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化`}>
+            {(palace.isOriginalPalace || palace.isBodyPalace) && <em className="ziwei-palace-identity">{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em>}
             <span className="ziwei-palace-main">
-              <span className="ziwei-palace-head"><span><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span>{(palace.isOriginalPalace || palace.isBodyPalace) && <em>{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em>}</span>
               <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
                 <span className="ziwei-star-column major" aria-label="甲级星">{starNames(palace.majorStars, scopes)}</span>
                 <span className="ziwei-star-column minor" aria-label="乙级星">{starNames(palace.minorStars, scopes)}</span>
@@ -138,7 +138,7 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
             <span className="ziwei-palace-layers"><span className="ziwei-layer-line" aria-label="大限星曜">{flowStars(selection.decade.stars[palace.index])}</span><span className="ziwei-layer-line" aria-label="流年星曜">{flowStars(selection.year.stars[palace.index])}</span></span>
             <span className="ziwei-flow-palace-names" aria-label="大限与流年宫位"><b>限·{selection.decade.palaceNames[palace.index]}</b><b>年·{selection.year.palaceNames[palace.index]}</b></span>
             <span className="ziwei-palace-foot"><span>{palace.decadal ? `${palace.decadal.range.join("–")}岁` : "—"}</span><strong>{palace.name.endsWith("宫") ? palace.name : `${palace.name}宫`}</strong><span>{palace.changsheng12}</span></span>
-          </button>;
+          </button><span className="ziwei-ganzhi-layer" style={{ gridArea: gridAreas[palace.earthlyBranch] }} aria-hidden="true"><b className={elementClass(palace.heavenlyStem)}>{palace.heavenlyStem}</b><b className={elementClass(palace.earthlyBranch)}>{palace.earthlyBranch}</b></span></Fragment>;
         })}
         <div className="ziwei-center" style={{ gridArea: "2 / 2 / 4 / 4" }} aria-label={`八字 ${result.source.fourPillars}`}>
           <div>{pillars.map((pillar, index) => <p key={`${pillar}-${index}`}><strong className={elementClass(pillar[0])}>{pillar[0]}</strong><b className={elementClass(pillar[1])}>{pillar[1]}</b></p>)}</div>

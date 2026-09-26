@@ -343,6 +343,7 @@ test("builds Chai-Bu rotating Qi Men from the shared four-pillar result", () => 
   assert.equal(qiMen.palaces.find((palace) => palace.number === 5).hiddenInstrument, null);
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.heavenGrowth.length >= palace.branches.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.earthGrowth.length === palace.branches.length));
+  assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.hiddenGrowth.length === palace.branches.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.stemResponses.length === palace.heavenInstruments.length));
   assert.ok(qiMen.palaces.filter((palace) => palace.number !== 5).every((palace) => palace.stemResponses.every((response) => response.combination && response.relation && response.interpretation)));
   assert.equal(getTwelveGrowthStage("甲", "辰"), "衰");

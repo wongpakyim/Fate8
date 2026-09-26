@@ -45,20 +45,23 @@ export function QiMenPanel({ result, dayPillar, hourPillar, copied, onCopy, onPr
         {result.palaces.map((palace) => <article className={`qimen-palace ${palace.number === 5 ? "center" : ""} ${palace.isChiefStar ? "chief-star" : ""} ${palace.isChiefDoor ? "chief-door" : ""}`} key={palace.number}>
           {palace.number !== 5 && <button type="button" className="qimen-response-focus" aria-describedby={`qimen-response-${palace.number}`}>查看{palace.name}十干克应</button>}
           <div className="qimen-flags">{palace.isChiefStar && <b className="chief">值符</b>}{palace.isChiefDoor && <b className="chief-door-flag">值使</b>}{palace.isVoid && <b>空亡</b>}{palace.isHorse && <b>马星</b>}</div>
-          {palace.number === 5 ? <div className="qimen-center-content"><small>天禽寄坤二</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>中宫地盘奇仪</span></div> : <div className="qimen-palace-layout">
-            <section className="qimen-hidden-corner" aria-label={`隐干${palace.hiddenInstrument}`}><small>隐干</small><strong className={elementClass(palace.hiddenInstrument)}>{palace.hiddenInstrument}</strong></section>
+          {palace.number === 5 ? <div className="qimen-center-content"><small>天禽寄坤二</small></div> : <div className="qimen-palace-layout">
+            <section className="qimen-hidden-corner">
+              <span className="qimen-corner-stem" aria-label={`隐干${palace.hiddenInstrument}，十二长生${growthLabel(palace.hiddenGrowth)}`}><strong className={elementClass(palace.hiddenInstrument)}>{palace.hiddenInstrument}</strong><small>{growthLabel(palace.hiddenGrowth)}</small></span>
+              {palace.heavenInstruments[1] && <span className="qimen-corner-stem" aria-label={`中宫寄干${palace.heavenInstruments[1]}，十二长生${growthLabel(palace.heavenGrowth.filter((item) => item.stem === palace.heavenInstruments[1]))}`}><b className={`qimen-center-lodged-stem ${elementClass(palace.heavenInstruments[1])}`}>{palace.heavenInstruments[1]}</b><small>{growthLabel(palace.heavenGrowth.filter((item) => item.stem === palace.heavenInstruments[1]))}</small></span>}
+            </section>
             <section className="qimen-symbol-stack" aria-label={`${palace.deity} ${palace.stars.join("、")} ${palace.door}`}>
               <strong className="qimen-deity-symbol">{palace.deity}</strong>
               <strong className="qimen-star-symbol">{palace.stars.join("·")}</strong>
               <strong className="qimen-door-symbol">{palace.door}</strong>
             </section>
-            <section className="qimen-heaven-corner"><small>天盘</small><strong className={elementClass(palace.heavenInstruments[0])}>{palace.heavenInstruments.join("·")}</strong><span>{growthLabel(palace.heavenGrowth)}</span></section>
-            <section className="qimen-earth-corner"><small>地盘</small><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>{growthLabel(palace.earthGrowth)}</span></section>
+            <section className="qimen-heaven-corner" aria-label={`天盘${palace.heavenInstruments[0]}`}><strong className={elementClass(palace.heavenInstruments[0])}>{palace.heavenInstruments[0]}</strong><span>{growthLabel(palace.heavenGrowth.filter((item) => item.stem === palace.heavenInstruments[0]))}</span></section>
+            <section className="qimen-earth-corner" aria-label={`地盘${palace.earthInstrument}`}><strong className={elementClass(palace.earthInstrument)}>{palace.earthInstrument}</strong><span>{growthLabel(palace.earthGrowth)}</span></section>
           </div>}
           {palace.number !== 5 && <aside className="qimen-stem-response" id={`qimen-response-${palace.number}`} role="tooltip"><small>十干克应 · 一般解读</small>{palace.stemResponses.map((response) => <p key={response.key}><strong>{response.combination}</strong><b>{response.relation}</b><span>{response.interpretation}</span></p>)}<em>须合参八门、九星、八神与宫位旺衰。</em></aside>}
         </article>)}
       </div>
-      <div className="qimen-legend"><span><i className="legend-chief" />值符九星</span><span><i className="legend-door" />值使八门</span><span><i className="legend-status" />空亡、马星</span><span><i className="legend-hidden" />隐干</span></div>
+      <div className="qimen-legend"><span><i className="legend-chief" />值符九星</span><span><i className="legend-door" />值使八门</span><span><i className="legend-status" />空亡、马星</span></div>
       <p className="qimen-note">当前按拆补法：以交节定节气，以最近甲、己日为符头分三元；隐干采用八门携带暗干法，随门取其元旦盘本宫的地盘奇仪。</p>
     </article>
   </section>;

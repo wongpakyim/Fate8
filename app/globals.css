@@ -158,7 +158,7 @@ summary span { float:right; color:#a09689; }
 .qimen-palace>header { display:flex; min-height:34px; align-items:flex-start; justify-content:space-between; gap:10px; padding-bottom:10px; border-bottom:1px solid #9ba79f; }.qimen-palace>header>div:first-child { display:flex; align-items:baseline; gap:8px; }.qimen-palace>header strong { color:#111b16; font-size:22px; font-weight:800; }.qimen-palace>header span { color:#46564d; font-size:13px; font-weight:600; white-space:nowrap; }
 .qimen-palace-body { display:grid; height:100%; min-height:282px; grid-template-rows:1fr 1.15fr auto; gap:8px; padding-top:23px; }.qimen-pair-row { display:grid; min-height:0; grid-template-columns:1fr 1fr; }.qimen-pair-row section { min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:7px 5px; text-align:center; }.qimen-pair-row small,.qimen-door-value small { color:#596a60; font-size:12px; font-weight:700; }.qimen-deity-value strong,.qimen-star-value strong { margin-top:4px; color:#111b16; font-size:24px; font-weight:800; }.qimen-heaven-stem-value strong,.qimen-earth-stem-value strong { margin:3px 0; font-size:34px; font-weight:800; line-height:1; }.qimen-heaven-stem-value span,.qimen-earth-stem-value span { color:#24372d; font-size:14px; font-weight:800; line-height:1.2; white-space:nowrap; }.qimen-door-value { display:flex; align-items:center; justify-content:center; gap:12px; min-height:43px; }.qimen-door-value strong { color:#111b16; font-size:25px; font-weight:800; }
 .qimen-palace.chief-star .qimen-star-value>strong { color:#057d70; }.qimen-palace.chief-door .qimen-door-value strong { color:#a5241d; }
-.qimen-palace-layout { display:grid; min-height:282px; grid-template-columns:.72fr 1.35fr .85fr; grid-template-rows:1fr 1fr; align-items:stretch; padding-top:18px; }.qimen-hidden-corner,.qimen-heaven-corner,.qimen-earth-corner { display:flex; min-width:0; flex-direction:column; align-items:center; justify-content:center; }.qimen-hidden-corner { grid-column:1; grid-row:1; align-self:start; justify-self:start; align-items:flex-start; padding:2px 0 0 3px; }.qimen-hidden-corner small,.qimen-heaven-corner small,.qimen-earth-corner small { color:#68756e; font-size:9px; font-weight:800; }.qimen-hidden-corner strong { margin-top:2px; font-size:29px; font-weight:900; line-height:1; }.qimen-symbol-stack { grid-column:2; grid-row:1/3; display:flex; min-width:0; flex-direction:column; align-items:center; justify-content:center; gap:9px; text-align:center; }.qimen-symbol-stack strong { font-weight:900; line-height:1; white-space:nowrap; }.qimen-deity-symbol { color:#9a5b16; font-size:20px; }.qimen-star-symbol { color:#08733f; font-size:25px; }.qimen-door-symbol { color:#a5221c; font-size:25px; }.qimen-heaven-corner { grid-column:3; grid-row:1; align-self:end; }.qimen-earth-corner { grid-column:3; grid-row:2; align-self:end; padding-bottom:3px; }.qimen-heaven-corner strong,.qimen-earth-corner strong { margin:2px 0; font-size:29px; font-weight:900; line-height:1; }.qimen-heaven-corner span,.qimen-earth-corner span { color:#304339; font-size:9px; font-weight:800; white-space:nowrap; }.qimen-palace.chief-star .qimen-star-symbol { color:#057d70; }.qimen-palace.chief-door .qimen-door-symbol { color:#a5241d; }.legend-hidden { background:#576b60; }
+.qimen-palace-layout { display:grid; min-height:282px; grid-template-columns:.72fr 1.35fr .85fr; grid-template-rows:1fr 1fr; align-items:stretch; padding-top:18px; }.qimen-hidden-corner,.qimen-heaven-corner,.qimen-earth-corner { display:flex; min-width:0; flex-direction:column; align-items:center; justify-content:center; }.qimen-hidden-corner { grid-column:1; grid-row:1; align-self:start; justify-self:start; align-items:flex-start; gap:5px; padding:2px 0 0 3px; }.qimen-corner-stem { display:flex; flex-direction:column; align-items:center; gap:2px; }.qimen-hidden-corner strong,.qimen-center-lodged-stem { font-size:29px; font-weight:900; line-height:1; }.qimen-center-lodged-stem { margin:0; }.qimen-corner-stem small { color:#304339; font-size:9px; font-weight:800; line-height:1; white-space:nowrap; }.qimen-symbol-stack { grid-column:2; grid-row:1/3; display:flex; min-width:0; flex-direction:column; align-items:center; justify-content:center; gap:9px; text-align:center; }.qimen-symbol-stack strong { font-weight:900; line-height:1; white-space:nowrap; }.qimen-deity-symbol { color:#9a5b16; font-size:20px; }.qimen-star-symbol { color:#08733f; font-size:25px; }.qimen-door-symbol { color:#a5221c; font-size:25px; }.qimen-heaven-corner { grid-column:3; grid-row:1; align-self:end; }.qimen-earth-corner { grid-column:3; grid-row:2; align-self:end; padding-bottom:3px; }.qimen-heaven-corner strong,.qimen-earth-corner strong { margin:2px 0; font-size:29px; font-weight:900; line-height:1; }.qimen-heaven-corner span,.qimen-earth-corner span { color:#304339; font-size:9px; font-weight:800; white-space:nowrap; }.qimen-palace.chief-star .qimen-star-symbol { color:#057d70; }.qimen-palace.chief-door .qimen-door-symbol { color:#a5241d; }
 .qimen-palace.center { display:flex; flex-direction:column; color:inherit; background:#f8f8f4; }.qimen-center-content { display:flex; flex:1; flex-direction:column; align-items:center; justify-content:center; }.qimen-center-content small { color:#707c75; font-size:13px; }.qimen-center-content strong { margin:12px 0; font-size:48px; font-weight:600; }.qimen-center-content span { color:#7c8781; font-size:12px; }
 .qimen-flags { position:absolute; top:10px; right:10px; z-index:2; display:flex; flex-wrap:wrap; justify-content:flex-end; gap:4px; }.qimen-flags b { padding:3px 5px; color:#704616; border:1px solid #c6aa83; background:#f4e7d4; font-size:10px; font-weight:800; }.qimen-flags b.chief { color:#056b60; border-color:#75b5aa; background:#dff3ef; }.qimen-flags b.chief-door-flag { color:#9c211b; border-color:#d8a09a; background:#f7e2df; }
 .qimen-response-focus { position:absolute; width:1px; height:1px; overflow:hidden; margin:-1px; padding:0; border:0; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; }.qimen-stem-response { position:absolute; inset:10px; z-index:5; display:flex; visibility:hidden; overflow:auto; flex-direction:column; justify-content:center; gap:9px; padding:18px; border:1px solid #5d6c63; opacity:0; color:#18271f; background:rgba(250,249,241,.98); box-shadow:0 12px 28px rgba(20,35,28,.2); transform:translateY(5px); transition:opacity .16s ease,transform .16s ease,visibility .16s; pointer-events:none; }.qimen-palace:hover .qimen-stem-response,.qimen-palace:focus-within .qimen-stem-response { visibility:visible; opacity:1; transform:translateY(0); }.qimen-palace:focus-within { box-shadow:inset 0 0 0 3px #7c9285; }.qimen-stem-response>small { color:#7a4f2e; font-size:12px; font-weight:800; letter-spacing:.08em; }.qimen-stem-response p { display:grid; grid-template-columns:auto 1fr; gap:4px 9px; margin:0; }.qimen-stem-response p strong { color:#15251d; font-size:24px; }.qimen-stem-response p b { align-self:center; color:#9a3028; font-size:14px; }.qimen-stem-response p span { grid-column:1/-1; color:#31483c; font-size:13px; font-weight:600; line-height:1.65; }.qimen-stem-response>em { color:#77847d; font-size:10px; font-style:normal; line-height:1.5; }
@@ -274,7 +274,7 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
   .qimen-door-value strong { font-size:19px; }
   .qimen-center-content strong { margin:5px 0; font-size:34px; }
   .qimen-palace-layout { min-height:133px; padding-top:10px; }
-  .qimen-hidden-corner strong,.qimen-heaven-corner strong,.qimen-earth-corner strong { font-size:24px; }
+  .qimen-hidden-corner strong,.qimen-center-lodged-stem,.qimen-heaven-corner strong,.qimen-earth-corner strong { font-size:24px; }
   .qimen-symbol-stack { gap:6px; }
   .qimen-deity-symbol { font-size:16px; }
   .qimen-star-symbol,.qimen-door-symbol { font-size:20px; }
@@ -294,11 +294,11 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
   .qimen-door-value { min-height:27px; gap:4px; }
   .qimen-door-value strong { font-size:16px; }
   .qimen-palace-layout { min-height:185px; padding-top:16px; }
-  .qimen-hidden-corner strong,.qimen-heaven-corner strong,.qimen-earth-corner strong { font-size:21px; }
+  .qimen-hidden-corner strong,.qimen-center-lodged-stem,.qimen-heaven-corner strong,.qimen-earth-corner strong { font-size:21px; }
   .qimen-symbol-stack { gap:5px; }
   .qimen-deity-symbol { font-size:13px; }
   .qimen-star-symbol,.qimen-door-symbol { font-size:16px; }
-  .qimen-hidden-corner small,.qimen-heaven-corner small,.qimen-earth-corner small,.qimen-heaven-corner span,.qimen-earth-corner span { font-size:6px; }
+  .qimen-corner-stem small,.qimen-heaven-corner span,.qimen-earth-corner span { font-size:6px; }
 }
 
 
@@ -399,3 +399,55 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 .ziwei-relation-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .ziwei-relation-legend i { display: inline-block; width: 30px; height: 0; border-top: 3px solid #267166; }
 .ziwei-relation-legend i.opposite { border-top-color: #9d3426; border-top-style: dashed; }
+
+/* Zi Wei compact board with aligned controls and a translucent Ganzhi foreground layer. */
+.ziwei-card { --ziwei-board-width: 62.5%; --ziwei-board-min-width: 520px; }
+.ziwei-toolbar,
+.ziwei-grid,
+.ziwei-relation-legend,
+.ziwei-note { width: var(--ziwei-board-width); min-width: var(--ziwei-board-min-width); margin-inline: auto; box-sizing: border-box; }
+.ziwei-toolbar { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px; padding: 8px 10px; }
+.ziwei-toolbar select { min-height: 34px; margin-top: 3px; padding: 4px 6px; }
+.ziwei-toolbar-primary { gap: 5px; }
+.ziwei-profile { gap: 4px; min-height: 34px; }
+.ziwei-profile strong { font-size: 16px; }
+.ziwei-profile span { padding: 3px 5px; font-size: 11px; }
+.ziwei-relation-mode { gap: 4px; }
+.ziwei-relation-mode legend { font-size: 11px; }
+.ziwei-toolbar .ziwei-relation-mode label { gap: 3px; min-height: 25px; padding: 3px 5px; font-size: 11px; }
+.ziwei-relation-mode input { width: 12px; height: 12px; }
+.ziwei-grid { grid-template-rows: repeat(4, 112.5px); border-width: 4px; }
+.ziwei-palace { min-height: 112.5px; padding: 3px 6px 24px; }
+.ziwei-palace:hover, .ziwei-palace:focus-visible, .ziwei-palace.palace-selected { outline-width: 2px; outline-offset: -2px; }
+.ziwei-palace.selected { box-shadow: inset 0 0 0 2px #315d4a; }
+.ziwei-palace-main { gap: 3px; }
+.ziwei-palace-identity { position: absolute; z-index: 4; top: 3px; left: 3px; min-width: 13px; color: #fff; background: #9d3426; font-size: 7.5px; font-style: normal; font-weight: 900; line-height: 13px; text-align: center; }
+.ziwei-star-columns { gap: 3px 1px; }
+.ziwei-star { min-width: 12.5px; }
+.ziwei-star-column .ziwei-star b { font-size: 12.1875px; letter-spacing: .04em; }
+.ziwei-star-mutagens { gap: 0; margin-top: 1px; }
+.ziwei-star-mutagens .ziwei-mutagen { padding: 0 1px; font-size: 7.5px; line-height: 10px; }
+.ziwei-palace-layers { margin-top: 3px; padding-top: 3px; padding-right: 36px; }
+.ziwei-palace-layers .ziwei-layer-line { margin: 1px 0; font-size: 7.5px; }
+.ziwei-flow-palace-names { right: 3px; bottom: 16px; }
+.ziwei-flow-palace-names b { font-size: 10.3125px; }
+.ziwei-palace-foot { right: 5px; bottom: 4px; left: 5px; gap: 3px; font-size: 7.5px; }
+.ziwei-palace-foot > strong { font-size: 16.25px; }
+.ziwei-center > div { gap: clamp(8px, 1.5vw, 21px); }
+.ziwei-center strong, .ziwei-center b { font-size: clamp(17px, 2vw, 29px); }
+.ziwei-ganzhi-layer { z-index: 10; display: flex; align-items: center; justify-content: center; min-width: 0; overflow: hidden; opacity: .6; font-family: "Noto Serif SC", "Songti SC", serif; font-size: 40.56px; font-weight: 900; line-height: .82; letter-spacing: -.18em; pointer-events: none; }
+.ziwei-ganzhi-layer b { position: relative; left: -.09em; font: inherit; }
+.ziwei-relation-lines { inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); }
+.ziwei-relation-legend { gap: 12px; padding: 5px 8px; font-size: 10px; }
+.ziwei-relation-legend i { width: 24px; border-top-width: 2px; }
+.ziwei-note { padding: 6px 9px; font-size: 10px; }
+
+@media (max-width: 980px) {
+  .ziwei-toolbar,
+  .ziwei-grid,
+  .ziwei-relation-legend,
+  .ziwei-note { width: var(--ziwei-board-width); min-width: var(--ziwei-board-min-width); }
+  .ziwei-toolbar { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .ziwei-toolbar-primary { grid-column: auto; }
+  .ziwei-grid { grid-template-rows: repeat(4, 112.5px); }
+}
