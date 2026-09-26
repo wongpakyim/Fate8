@@ -127,7 +127,6 @@ export function ZiWeiPanel({ calculation, copied, onCopy, onPreviousTime, onNext
           const decadeActive = selection.decade.palaceIndex === palace.index;
           const palaceActive = selectedPalaceIndex === palace.index;
           return <Fragment key={palace.index}><button type="button" className={`ziwei-palace ${decadeActive ? "selected" : ""} ${palaceActive ? "palace-selected" : ""}`} style={{ gridArea: gridAreas[palace.earthlyBranch] }} onClick={() => setSelectedPalaceIndex(palace.index)} aria-label={`查看${palace.name}宫四化`}>
-            {(palace.isOriginalPalace || palace.isBodyPalace) && <em className="ziwei-palace-identity">{palace.isOriginalPalace ? "命" : ""}{palace.isBodyPalace ? "身" : ""}</em>}
             <span className="ziwei-palace-main">
               <span className="ziwei-star-columns" aria-label="甲乙丙级星曜">
                 <span className="ziwei-star-column major" aria-label="甲级星">{starNames(palace.majorStars, scopes)}</span>

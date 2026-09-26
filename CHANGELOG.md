@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.2.3 — 2026-09-27
+
+- Make the Zi Wei board responsive across desktop, tablet, and mobile widths without horizontal page overflow.
+- Keep the toolbar, twelve-palace board, relation legend, and note aligned while scaling palace content and relation lines together.
+- Remove the visible life-palace and body-palace corner markers from the twelve-palace Web chart.
+
 ## 0.2.2 — 2026-09-27
 
 - Add twelve-growth states for Qi Men hidden stems and center-palace lodged stems, and simplify palace labels around the compact symbol stack.

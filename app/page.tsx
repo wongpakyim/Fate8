@@ -277,7 +277,7 @@ export default function Home() {
       {activeTab === "reverse" && <ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSearch={searchReverse} onApply={applyReverseMatch} />}
 
       {copiedPanel && <div className="copy-toast" role="status">盘面信息已复制，可在其他地方直接粘贴</div>}
-      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.2</span></footer>
+      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.3</span></footer>
     </main>
   );
 }
