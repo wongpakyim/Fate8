@@ -1,8 +1,8 @@
 export type ModuleTab = "bazi" | "reverse" | "liuren" | "qimen" | "ziwei";
 
 const tabs: Array<{ id: ModuleTab; label: string }> = [
+  { id: "reverse", label: "八字排盘/反排" },
   { id: "bazi", label: "八字" },
-  { id: "reverse", label: "八字反排" },
   { id: "liuren", label: "六壬" },
   { id: "qimen", label: "奇门" },
   { id: "ziwei", label: "紫微" },

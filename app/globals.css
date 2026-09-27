@@ -166,6 +166,12 @@ summary span { float:right; color:#a09689; }
 .qimen-legend { width:min(1020px,100%); margin:15px auto 0; display:flex; justify-content:center; gap:26px; color:#65716a; font-size:12px; }.qimen-legend span { display:flex; align-items:center; gap:7px; }.qimen-legend i { display:block; width:22px; height:4px; }.legend-chief { background:#08a896; }.legend-door { background:#b6362e; }.legend-status { background:#b08c55; }
 .qimen-note { width:min(1020px,100%); margin:15px auto 0; padding:14px 17px; border-left:2px solid #9b3a2d; color:#53665c; background:#e9efe7; font-size:12px; line-height:1.75; }
 .reverse-page { max-width:900px; }.reverse-workbench { padding:34px; border:1px solid #b9c8bc; background:rgba(248,250,243,.95); box-shadow:0 20px 50px rgba(31,55,46,.09); }.reverse-workbench form>label { display:block; }.reverse-workbench form>label input { font-size:18px; letter-spacing:.25em; text-align:center; }
+.workspace.chart-only { grid-template-columns:minmax(0,1fr); }
+.reverse-input-card { width:min(900px,92vw); box-sizing:border-box; margin:20px auto 40px; }
+.reverse-sex-options { display:flex; align-items:center; gap:10px; margin:16px 0; padding:0; border:0; }
+.reverse-sex-options legend { float:left; margin-right:4px; color:#5b675f; font-size:12px; font-weight:800; }
+.reverse-sex-options label { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:4px 12px; border:1px solid #b5c2b7; background:#fffef8; color:#263b31; font-size:13px; font-weight:800; cursor:pointer; }
+.reverse-sex-options input { width:15px; height:15px; margin:0; accent-color:#315d4a; }
 .detail-section { width:min(1180px,92vw); margin:22px auto 20px; }.node-only .manhattan-panel { margin-top:0; }
 .detail-heading { display:flex; align-items:center; gap:12px; padding:24px 2px 18px; }.detail-heading div p { margin:4px 0 0; color:#9a9082; font-size:10px; }.method-chip { margin-left:auto; padding:5px 9px; border:1px solid var(--line); color:#948878; font-size:9px; }
 .detail-grid { display:grid; grid-template-columns:1fr 1.25fr; gap:14px; }
@@ -495,4 +501,142 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
   .ziwei-relation-lines { inset: 2px; width: calc(100% - 4px); height: calc(100% - 4px); }
   .ziwei-relation-legend { flex-wrap: wrap; gap: 5px 10px; padding: 5px; font-size: 9px; }
   .ziwei-note { padding: 6px; font-size: 9px; line-height: 1.45; }
+}
+
+/* Keep the BaZi workspace readable on narrow screens without flattening its data. */
+@media (max-width: 680px) {
+  .topbar { gap: 6px; padding-inline: 8px; }
+  .module-tabs {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-start;
+    gap: 2px;
+    margin: 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+  .module-tabs::-webkit-scrollbar { display: none; }
+  .module-tabs button {
+    flex: 0 0 auto;
+    min-width: max-content;
+    padding-inline: 6px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .workspace.chart-only {
+    width: 100%;
+    padding-inline: 6px;
+    scroll-margin-top: 84px;
+  }
+  .workspace.chart-only .chart-card {
+    min-width: 0;
+    padding: 16px 7px 20px;
+    overflow: hidden;
+  }
+  .bazi-interactive-chart .chart-head {
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .bazi-interactive-chart .chart-head > div:first-child { flex-wrap: wrap; }
+  .bazi-interactive-chart .chart-actions {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+  .bazi-interactive-chart .chart-actions .chart-time-controls {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .bazi-interactive-chart .chart-actions button {
+    min-width: 0;
+    padding: 8px 5px;
+  }
+  .bazi-interactive-chart .profile-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-block: 12px;
+  }
+  .bazi-interactive-chart .profile-strip div { min-width: 0; padding-inline: 5px; }
+  .bazi-interactive-chart .profile-strip strong {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: 12px;
+  }
+  .bazi-interactive-chart .time-note { gap: 6px 10px; font-size: 10px; }
+  .bazi-focus-summary { min-width: 0; }
+  .bazi-focus-summary > p span { font-size: 9px; }
+  .bazi-luck-panel {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .bazi-luck-panel > header,
+  .annual-drawer > header { padding: 9px 8px; }
+  .annual-drawer > header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .bazi-luck-panel .luck-timeline,
+  .bazi-luck-panel .annual-grid {
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  .bazi-luck-panel .luck-timeline { grid-template-columns: repeat(8, minmax(96px, 1fr)); }
+  .bazi-luck-panel .annual-grid { grid-template-columns: repeat(10, minmax(84px, 1fr)); }
+  .bazi-luck-panel .luck-timeline > article,
+  .bazi-luck-panel .annual-grid > article { scroll-snap-align: start; }
+  .pillars { grid-template-columns: 30px repeat(4, minmax(0, 1fr)); }
+  .bazi-interactive-chart .pillar-labels,
+  .bazi-interactive-chart .pillar {
+    grid-template-rows: 28px 34px 62px 66px 54px 30px 34px 38px minmax(124px, auto);
+  }
+  .bazi-interactive-chart .pillar-labels {
+    padding-top: 28px;
+    grid-template-rows: 34px 62px 66px 54px 30px 34px 38px minmax(124px, auto);
+    font-size: 8px;
+  }
+  .bazi-interactive-chart .pillar-title { font-size: 11px; }
+  .bazi-interactive-chart .god b { font-size: 12px; }
+  .bazi-interactive-chart .chart-character > b { font-size: clamp(34px, 10vw, 42px); }
+  .bazi-interactive-chart .chart-character small,
+  .bazi-interactive-chart .chart-character span { font-size: 8px; }
+  .bazi-interactive-chart .hidden { gap: 0; }
+  .bazi-interactive-chart .hidden button.hidden-focus { min-width: 20px; padding: 2px 1px; }
+  .bazi-interactive-chart .hidden button.hidden-focus b { font-size: 12px; }
+  .bazi-interactive-chart .hidden i,
+  .bazi-interactive-chart .hidden em { font-size: 7px; }
+  .bazi-interactive-chart .nayin,
+  .bazi-interactive-chart .growth-stage,
+  .bazi-interactive-chart .pillar-strength,
+  .bazi-interactive-chart .pillar-strength small { font-size: 9px; }
+  .bazi-interactive-chart .shensha-groups { gap: 3px; padding: 5px 2px; }
+  .bazi-interactive-chart .shensha-groups p {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 3px;
+    line-height: 1.3;
+  }
+  .bazi-interactive-chart .shensha-groups small,
+  .bazi-interactive-chart .shensha-groups span { font-size: 10px; }
+  .bazi-interactive-chart .branch-relation-tooltip {
+    width: min(190px, calc(100vw - 32px));
+  }
+  .node-only {
+    width: 100%;
+    padding-inline: 6px;
+  }
+  .node-only .detail-heading { padding-inline: 8px; }
+  .node-only .manhattan-panel {
+    min-width: 0;
+    padding: 12px 5px;
+    overflow: hidden;
+  }
+  .node-only .manhattan-board { height: 216px; }
+  .node-only .bazi-node { width: 88%; height: 70px; }
+  .node-only .bazi-node > strong { font-size: 27px; }
+  .node-only .path-combinations {
+    grid-template-columns: minmax(0, 1fr);
+    max-height: 400px;
+  }
 }

@@ -53,7 +53,7 @@ export default function Home() {
   const [inputMode, setInputMode] = useState<"picker" | "text">("picker");
   const [dateTime, setDateTime] = useState(initialDateTime);
   const [textTime, setTextTime] = useState(() => formatBirthCode(initialDateTime, "male"));
-  const [sex, setSex] = useState("male");
+  const [sex, setSex] = useState<"female" | "male">("male");
   const [provinceCode, setProvinceCode] = useState(defaultProvinceCode);
   const [cityCode, setCityCode] = useState(defaultCityCode);
   const [districtCode, setDistrictCode] = useState(defaultDistrictCode);
@@ -63,7 +63,6 @@ export default function Home() {
   const [timezone, setTimezone] = useState("8");
   const [dayBoundary, setDayBoundary] = useState<23 | 24>(23);
   const [solarTimeMode, setSolarTimeMode] = useState<"apparent" | "mean" | "none">("apparent");
-  const [inputCollapsed, setInputCollapsed] = useState(false);
   const [calculation, setCalculation] = useState<FourPillarsCalculation>(() => initialCalculation(initialDateTime));
   const [monthGeneralMode, setMonthGeneralMode] = useState<"auto" | "manual">("auto");
   const [manualMonthGeneral, setManualMonthGeneral] = useState("子");
@@ -104,6 +103,11 @@ export default function Home() {
     return calculateFourPillars({ solarTime, sex: chartSex, location: locationOverride ?? (manualLongitude ? "手工经度" : placeName), longitude: effectiveLongitude, latitude: manualLongitude ? undefined : locationCenter.latitude, timezoneOffset: Number(timezone) }, { dayBoundary, solarTimeMode });
   }
 
+  function selectSex(nextSex: "female" | "male") {
+    setSex(nextSex);
+    setTextTime((current) => current.replace(/^(\s*)[01]/, `$1${nextSex === "female" ? "0" : "1"}`));
+  }
+
   function submitChart(event?: React.FormEvent) {
     event?.preventDefault();
     try {
@@ -115,8 +119,9 @@ export default function Home() {
       if (codedInput) setDateTime(codedInput.solarTime.slice(0, 16).replace(" ", "T"));
       setCalculation(nextCalculation);
       setSelectedPath(null);
-      setInputCollapsed(true);
       setError("");
+      setActiveTab("bazi");
+      window.setTimeout(() => document.querySelector("#chart")?.scrollIntoView({ behavior: "smooth" }), 50);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "排盘失败，请检查输入");
     }
@@ -193,7 +198,6 @@ export default function Home() {
     const nextCalculation = calculateFourPillars({ solarTime, sex, location: REVERSE_SEARCH_BASIS.location, longitude: REVERSE_SEARCH_BASIS.longitude, timezoneOffset: REVERSE_SEARCH_BASIS.timezoneOffset }, { dayBoundary, solarTimeMode: REVERSE_SEARCH_BASIS.solarTimeMode });
     setCalculation(nextCalculation);
     setSelectedPath(null);
-    setInputCollapsed(true);
     setActiveTab("bazi");
     window.setTimeout(() => document.querySelector("#chart")?.scrollIntoView({ behavior: "smooth" }), 50);
   }
@@ -203,13 +207,48 @@ export default function Home() {
   const baziNodes = getBaziNodeStates(result);
   const liuRen = session.liuRen;
   const qiMen = session.qiMen;
+  const chartInputForm = <form className="input-card reverse-input-card" id="birth-input" onSubmit={submitChart}>
+    <div className="section-heading"><div><span className="step">排</span><h2>排盘资料</h2></div><span className="required">阳历输入</span></div>
+    <div className="segmented" role="tablist" aria-label="输入方式">
+      <button type="button" className={inputMode === "picker" ? "selected" : ""} onClick={() => setInputMode("picker")}>日期选择</button>
+      <button type="button" className={inputMode === "text" ? "selected" : ""} onClick={() => setInputMode("text")}>文字输入</button>
+    </div>
+
+    <div className="form-grid">
+      {inputMode === "picker" ? <label className="wide datetime-field"><span className="datetime-label-row">阳历出生时间<button type="button" onClick={useCurrentTime}>现在</button></span><input type="datetime-local" required min="1000-01-01T00:00" max="2100-12-31T23:59" value={dateTime} onChange={(event) => { const value = event.target.value; setDateTime(value); if (value) setTextTime(formatBirthCode(value, sex)); }} /></label> : <label className="wide text-input">性别码 + 阳历时间<input inputMode="numeric" autoComplete="off" value={textTime} onChange={(event) => { const value = event.target.value; setTextTime(value); const code = value.trim()[0]; if (code === "0" || code === "1") setSex(code === "0" ? "female" : "male"); }} placeholder="如：0201903010856" /><small>0 女 · 1 男，后接 yyyyMMddHHmm，秒数自动按 00 计算</small></label>}
+      <label>性别<select value={sex} onChange={(event) => selectSex(event.target.value as "female" | "male")}><option value="female">女 · 坤造 · 0</option><option value="male">男 · 乾造 · 1</option></select></label>
+      <label>时区<select value={timezone} onChange={(event) => setTimezone(event.target.value)}><option value="8">UTC+8 北京</option><option value="7">UTC+7</option><option value="9">UTC+9</option><option value="0">UTC±0</option></select></label>
+    </div>
+
+    <div className="divider" />
+    <div className="field-title-row"><span className="field-label">出生地</span><button type="button" className="text-button" onClick={() => { setLocationOverride(null); setManualLongitude((value) => !value); }}>{manualLongitude ? "使用行政区" : "直接输入经度"}</button></div>
+    {!manualLongitude ? <>
+      <div className="location-row">
+        <select aria-label="省份" value={province.code} onChange={(event) => { setLocationOverride(null); selectProvince(event.target.value); }}>{divisions.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+        <select aria-label="地级市" value={city?.code} onChange={(event) => { setLocationOverride(null); selectCity(event.target.value); }}>{cities.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+        <select aria-label="区县" value={district?.code} onChange={(event) => { setLocationOverride(null); setDistrictCode(event.target.value); }}>{districts.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
+      </div>
+      <div className="location-meta"><span>东经 {locationCenter.longitude?.toFixed(3)}°</span><span>北纬 {locationCenter.latitude?.toFixed(3)}°</span><span className="data-count">3,209 个行政区</span></div>
+    </> : <div className="manual-longitude"><label>经度（东经为正）<input type="number" min="-180" max="180" step="0.001" value={longitudeInput} onChange={(event) => { setLocationOverride(null); setLongitudeInput(event.target.value); }} /></label>{locationOverride === REVERSE_SEARCH_BASIS.location ? <p><strong>省 / 地级市 / 县：反排</strong><br />出生地按“反排”记录，固定使用东经 120° 标准时。</p> : <p>例：广州 113.27，北京 116.41。可输入出生医院的精确经度。</p>}</div>}
+
+    <details className="settings">
+      <summary>排盘口径设置 <span>{solarTimeMode === "apparent" ? "真太阳时" : solarTimeMode === "mean" ? "地方平太阳时" : "标准时"} · {dayBoundary}时换日</span></summary>
+      <div className="settings-grid">
+        <label>换日规则<select value={dayBoundary} onChange={(event) => setDayBoundary(Number(event.target.value) as 23 | 24)}><option value="23">23 时（子初）换日</option><option value="24">24 时（午夜）换日</option></select></label>
+        <label>校时方式<select value={solarTimeMode} onChange={(event) => setSolarTimeMode(event.target.value as typeof solarTimeMode)}><option value="apparent">真太阳时（经度 + 均时差）</option><option value="mean">地方平太阳时（仅经度）</option><option value="none">标准时（不校正）</option></select></label>
+      </div>
+    </details>
+    {error && <p className="error-message" role="alert">{error}</p>}
+    <button className="primary-button" type="submit">开始排盘 <span>→</span></button>
+    <p className="privacy">仅在当前浏览器内计算，不上传或保存出生信息</p>
+  </form>;
 
   return (
     <main>
       <header className="topbar">
         <button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")} aria-label="进入八字排盘"><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button>
         <ModuleTabs active={activeTab} onChange={(tab) => tab === "reverse" ? openReverse() : setActiveTab(tab)} />
-        <button className="ghost-button" onClick={() => { setActiveTab("bazi"); setInputCollapsed(false); }}>排盘资料</button>
+        <button className="ghost-button" onClick={() => { setActiveTab("reverse"); window.setTimeout(() => document.querySelector("#birth-input")?.scrollIntoView({ behavior: "smooth" }), 50); }}>排盘资料</button>
       </header>
 
       {activeTab === "bazi" && <section className="hero" id="top">
@@ -219,43 +258,7 @@ export default function Home() {
         <div className="hero-badges"><span>太阳视黄经定节气</span><span>真太阳时校正</span><span>23 / 24 时换日</span></div>
       </section>}
 
-      {activeTab === "bazi" && <section className={`workspace ${inputCollapsed ? "input-collapsed" : ""}`} id="chart">
-        {inputCollapsed ? <aside className="input-collapsed-rail"><button onClick={() => setInputCollapsed(false)} aria-label="展开排盘资料"><span>排盘</span><small>编辑资料</small></button></aside> : <form className="input-card" onSubmit={submitChart}>
-          <div className="section-heading"><div><span className="step">01</span><h2>出生信息</h2></div><div className="input-heading-actions"><span className="required">阳历输入</span><div className="input-suspend" role="button" tabIndex={0} onClick={() => setInputCollapsed(true)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") setInputCollapsed(true); }}>挂起</div></div></div>
-          <div className="segmented" role="tablist" aria-label="输入方式">
-            <button type="button" className={inputMode === "picker" ? "selected" : ""} onClick={() => setInputMode("picker")}>日期选择</button>
-            <button type="button" className={inputMode === "text" ? "selected" : ""} onClick={() => setInputMode("text")}>文字输入</button>
-          </div>
-
-          <div className="form-grid">
-            {inputMode === "picker" ? <label className="wide datetime-field"><span className="datetime-label-row">阳历出生时间<button type="button" onClick={useCurrentTime}>现在</button></span><input type="datetime-local" required min="1000-01-01T00:00" max="2100-12-31T23:59" value={dateTime} onChange={(event) => { const value = event.target.value; setDateTime(value); if (value) setTextTime(formatBirthCode(value, sex)); }} /></label> : <label className="wide text-input">性别码 + 阳历时间<input inputMode="numeric" autoComplete="off" value={textTime} onChange={(event) => { const value = event.target.value; setTextTime(value); const code = value.trim()[0]; if (code === "0" || code === "1") setSex(code === "0" ? "female" : "male"); }} placeholder="如：0201903010856" /><small>0 女 · 1 男，后接 yyyyMMddHHmm，秒数自动按 00 计算</small></label>}
-            <label>性别<select value={sex} onChange={(event) => { const nextSex = event.target.value; setSex(nextSex); setTextTime((current) => current.replace(/^(\s*)[01]/, `$1${nextSex === "female" ? "0" : "1"}`)); }}><option value="female">女 · 坤造 · 0</option><option value="male">男 · 乾造 · 1</option></select></label>
-            <label>时区<select value={timezone} onChange={(event) => setTimezone(event.target.value)}><option value="8">UTC+8 北京</option><option value="7">UTC+7</option><option value="9">UTC+9</option><option value="0">UTC±0</option></select></label>
-          </div>
-
-          <div className="divider" />
-          <div className="field-title-row"><span className="field-label">出生地</span><button type="button" className="text-button" onClick={() => { setLocationOverride(null); setManualLongitude((value) => !value); }}>{manualLongitude ? "使用行政区" : "直接输入经度"}</button></div>
-          {!manualLongitude ? <>
-            <div className="location-row">
-              <select aria-label="省份" value={province.code} onChange={(event) => { setLocationOverride(null); selectProvince(event.target.value); }}>{divisions.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
-              <select aria-label="地级市" value={city?.code} onChange={(event) => { setLocationOverride(null); selectCity(event.target.value); }}>{cities.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
-              <select aria-label="区县" value={district?.code} onChange={(event) => { setLocationOverride(null); setDistrictCode(event.target.value); }}>{districts.map((item) => <option value={item.code} key={item.code}>{item.name}</option>)}</select>
-            </div>
-            <div className="location-meta"><span>东经 {locationCenter.longitude?.toFixed(3)}°</span><span>北纬 {locationCenter.latitude?.toFixed(3)}°</span><span className="data-count">3,209 个行政区</span></div>
-          </> : <div className="manual-longitude"><label>经度（东经为正）<input type="number" min="-180" max="180" step="0.001" value={longitudeInput} onChange={(event) => { setLocationOverride(null); setLongitudeInput(event.target.value); }} /></label>{locationOverride === REVERSE_SEARCH_BASIS.location ? <p><strong>省 / 地级市 / 县：反排</strong><br />出生地按“反排”记录，固定使用东经 120° 标准时。</p> : <p>例：广州 113.27，北京 116.41。可输入出生医院的精确经度。</p>}</div>}
-
-          <details className="settings">
-            <summary>排盘口径设置 <span>{solarTimeMode === "apparent" ? "真太阳时" : solarTimeMode === "mean" ? "地方平太阳时" : "标准时"} · {dayBoundary}时换日</span></summary>
-            <div className="settings-grid">
-              <label>换日规则<select value={dayBoundary} onChange={(event) => setDayBoundary(Number(event.target.value) as 23 | 24)}><option value="23">23 时（子初）换日</option><option value="24">24 时（午夜）换日</option></select></label>
-              <label>校时方式<select value={solarTimeMode} onChange={(event) => setSolarTimeMode(event.target.value as typeof solarTimeMode)}><option value="apparent">真太阳时（经度 + 均时差）</option><option value="mean">地方平太阳时（仅经度）</option><option value="none">标准时（不校正）</option></select></label>
-            </div>
-          </details>
-          {error && <p className="error-message" role="alert">{error}</p>}
-          <button className="primary-button" type="submit">开始排盘 <span>→</span></button>
-          <p className="privacy">仅在当前浏览器内计算，不上传或保存出生信息</p>
-        </form>}
-
+      {activeTab === "bazi" && <section className="workspace chart-only" id="chart">
         <BaziChartPanel key={`${result.time.standard}-${result.fourPillars.compact}`} result={result} copied={copiedPanel === "bazi"} onCopy={(text) => copyPanelText("bazi", text)} onDownload={downloadResult} onPreviousTime={() => shiftChartTime(-2)} onNextTime={() => shiftChartTime(2)} />
       </section>}
 
@@ -274,10 +277,10 @@ export default function Home() {
         <BaziNodePanel nodes={baziNodes} selectedPath={selectedPath} onSelectPath={setSelectedPath} />
       </section>}
 
-      {activeTab === "reverse" && <ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSearch={searchReverse} onApply={applyReverseMatch} />}
+      {activeTab === "reverse" && <><ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} sex={sex} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSexChange={selectSex} onSearch={searchReverse} onApply={applyReverseMatch} />{chartInputForm}</>}
 
       {copiedPanel && <div className="copy-toast" role="status">盘面信息已复制，可在其他地方直接粘贴</div>}
-      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.3</span></footer>
+      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.4</span></footer>
     </main>
   );
 }

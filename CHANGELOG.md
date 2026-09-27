@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.2.4 — 2026-09-27
+
+- Move the birth-chart input below reverse lookup, add reverse gender radios, and return to the BaZi tab after applying either input path.
+- Put the combined BaZi input/reverse tab first and make the BaZi chart layout responsive for mobile screens.
+
 ## 0.2.3 — 2026-09-27
 
 - Make the Zi Wei board responsive across desktop, tablet, and mobile widths without horizontal page overflow.

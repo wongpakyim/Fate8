@@ -3,15 +3,17 @@ import { reverseSearchFourPillars } from "@/lib/four-pillars.mjs";
 
 type ReverseResult = ReturnType<typeof reverseSearchFourPillars>;
 
-export function ReversePanel({ text, start, end, result, error, onTextChange, onStartChange, onEndChange, onSearch, onApply }: {
+export function ReversePanel({ text, start, end, sex, result, error, onTextChange, onStartChange, onEndChange, onSexChange, onSearch, onApply }: {
   text: string;
   start: string;
   end: string;
+  sex: "female" | "male";
   result: ReverseResult | null;
   error: string;
   onTextChange: (value: string) => void;
   onStartChange: (value: string) => void;
   onEndChange: (value: string) => void;
+  onSexChange: (value: "female" | "male") => void;
   onSearch: (event: FormEvent) => void;
   onApply: (solarTime: string) => void;
 }) {
@@ -21,6 +23,7 @@ export function ReversePanel({ text, start, end, result, error, onTextChange, on
       <div className="modal-heading"><span className="seal">反</span><div><small>REVERSE LOOKUP</small><h2>八字反查出生时刻</h2><p>固定按东经 120°、UTC+8 标准时反排；出生地及省、市、县统一记为“反排”。</p></div></div>
       <form onSubmit={onSearch}>
         <label>四柱八字<input value={text} onChange={(event) => onTextChange(event.target.value)} placeholder="壬申 癸卯 庚寅 癸未" /></label>
+        <fieldset className="reverse-sex-options"><legend>性别</legend><label><input type="radio" name="reverse-sex" value="female" checked={sex === "female"} onChange={() => onSexChange("female")} />女 · 坤造</label><label><input type="radio" name="reverse-sex" value="male" checked={sex === "male"} onChange={() => onSexChange("male")} />男 · 乾造</label></fieldset>
         <div className="range-row"><label>起始年份<input type="number" min="1000" max="2100" value={start} onChange={(event) => onStartChange(event.target.value)} /></label><span>至</span><label>结束年份<input type="number" min="1000" max="2100" value={end} onChange={(event) => onEndChange(event.target.value)} /></label><button className="primary-button" type="submit">开始反查</button></div>
       </form>
       {error && <p className="error-message">{error}</p>}
