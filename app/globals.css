@@ -408,7 +408,7 @@ main>footer { display:flex; align-items:center; gap:30px; padding:26px max(5vw,3
 
 /* Zi Wei responsive board with aligned controls and a translucent Ganzhi foreground layer. */
 .ziwei-card {
-  --ziwei-board-width: clamp(520px, 62.5%, 800px);
+  --ziwei-board-width: clamp(624px, 75%, 960px);
   --ziwei-cell-height: clamp(96px, 8vw, 112.5px);
   width: min(100%, 1280px);
   min-width: 0;

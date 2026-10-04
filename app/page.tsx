@@ -70,7 +70,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [copiedPanel, setCopiedPanel] = useState<"bazi" | "liuren" | "qimen" | "ziwei" | null>(null);
   const [reverseText, setReverseText] = useState(calculation.fourPillars.text);
-  const [reverseStart, setReverseStart] = useState("1000");
+  const [reverseStart, setReverseStart] = useState("1900");
   const [reverseEnd, setReverseEnd] = useState("2100");
   const [reverseResult, setReverseResult] = useState<ReverseResult | null>(null);
   const [reverseError, setReverseError] = useState("");
@@ -280,7 +280,7 @@ export default function Home() {
       {activeTab === "reverse" && <><ReversePanel text={reverseText} start={reverseStart} end={reverseEnd} sex={sex} result={reverseResult} error={reverseError} onTextChange={setReverseText} onStartChange={setReverseStart} onEndChange={setReverseEnd} onSexChange={selectSex} onSearch={searchReverse} onApply={applyReverseMatch} />{chartInputForm}</>}
 
       {copiedPanel && <div className="copy-toast" role="status">盘面信息已复制，可在其他地方直接粘贴</div>}
-      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.4</span></footer>
+      <footer><button className="brand brand-button" type="button" onClick={() => setActiveTab("bazi")}><span className="brand-mark">命</span><span>知命排盘<small>ZI MING</small></span></button><p>历法工具用于传统文化研究与个人参考，不构成医疗、法律、投资或人生决策建议。</p><span>Fate8 v0.2.5</span></footer>
     </main>
   );
 }

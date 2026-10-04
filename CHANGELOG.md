@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.2.5 — 2026-10-04
+
+- Enlarge the Zi Wei board by 20% on desktop while preserving the existing tablet and mobile layout, and default reverse lookup to 1900.
+
 ## 0.2.4 — 2026-09-27
 
 - Move the birth-chart input below reverse lookup, add reverse gender radios, and return to the BaZi tab after applying either input path.
