@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.2.6 — 2026-10-04
+
+- Correct the desktop Zi Wei twelve-palace board to a 6:4 horizontal-to-vertical ratio without changing responsive mobile sizing.
+
 ## 0.2.5 — 2026-10-04
 
 - Enlarge the Zi Wei board by 20% on desktop while preserving the existing tablet and mobile layout, and default reverse lookup to 1900.
