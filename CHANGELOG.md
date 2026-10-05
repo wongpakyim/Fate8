@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.2.7 — 2026-10-06
+
+- Fix luck-cycle start years by converting the complete birth date and time to a decimal year before adding the precise luck-start age.
+
 ## 0.2.6 — 2026-10-04
 
 - Correct the desktop Zi Wei twelve-palace board to a 6:4 horizontal-to-vertical ratio without changing responsive mobile sizing.

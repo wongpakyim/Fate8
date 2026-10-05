@@ -25,6 +25,19 @@ test("keeps calculation and presentation as independently reusable modules", () 
   assert.ok(chart.luck.cycles.length === 8);
 });
 
+test("anchors luck start to the full decimal birth date instead of the integer birth year", () => {
+  const calculation = calculateFourPillars({ solarTime: "1988-09-24 03:40", sex: "male", longitude: 120 }, { solarTimeMode: "none" });
+  assert.equal(calculation.luckStart.startAge, 4.75);
+  assert.ok(calculation.luckStart.birthYearDecimal > 1988.72 && calculation.luckStart.birthYearDecimal < 1988.74);
+  assert.ok(calculation.luckStart.startYearDecimal > 1993.47 && calculation.luckStart.startYearDecimal < 1993.49);
+  assert.match(calculation.luckStart.startTime, /^1993-06-2[45]/);
+  assert.equal(calculation.luckStart.startYear, 1993);
+
+  const chart = buildBaziChart(calculation);
+  assert.equal(chart.luck.cycles[0].startYear, 1993);
+  assert.equal(chart.luck.cycles[1].startYear, 2003);
+});
+
 test("lists branch harmony, break, punishment, clash, and harm hover hints", () => {
   assert.deepEqual(getBranchRelationHints(2).map(({ type, target, explanation }) => `${type}-${target}-${explanation}`), [
     "合-亥-结合整合",
